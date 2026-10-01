@@ -11,6 +11,7 @@ import { GatewaysModule } from './gateways/gateways.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MomentsModule } from './moments/moments.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { MomentsModule } from './moments/moments.module';
     UploadsModule,
     NotificationsModule,
     MomentsModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

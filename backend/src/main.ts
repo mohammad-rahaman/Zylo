@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe, Logger, RequestMethod } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -53,8 +53,10 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
-  // Global API Route Prefix
-  app.setGlobalPrefix(apiPrefix);
+  // Global API Route Prefix (health check stays at the root /health)
+  app.setGlobalPrefix(apiPrefix, {
+    exclude: [{ path: 'health', method: RequestMethod.GET }],
+  });
 
   // Swagger OpenAPI Documentation
   const swaggerConfig = new DocumentBuilder()
