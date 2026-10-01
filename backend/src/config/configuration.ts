@@ -1,3 +1,23 @@
+const isProduction = process.env.NODE_ENV === 'production';
+
+/**
+ * Resolve a secret from the environment. In production the variable is
+ * mandatory and the process fails fast if it is missing, so insecure
+ * development defaults can never leak into a deployed build.
+ */
+function resolveSecret(name: string, devFallback: string): string {
+  const value = process.env[name];
+  if (value && value.length > 0) {
+    return value;
+  }
+  if (isProduction) {
+    throw new Error(
+      `${name} must be set in production. Refusing to start with an insecure default secret.`,
+    );
+  }
+  return devFallback;
+}
+
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 3000,
   apiPrefix: process.env.API_PREFIX || 'api/v1',
@@ -11,9 +31,9 @@ export default () => ({
     password: process.env.REDIS_PASSWORD || undefined,
   },
   jwt: {
-    accessSecret: process.env.JWT_ACCESS_SECRET || 'zylo_access_secret_123',
+    accessSecret: resolveSecret('JWT_ACCESS_SECRET', 'zylo_access_secret_123'),
     accessExpiration: process.env.JWT_ACCESS_EXPIRATION || '15m',
-    refreshSecret: process.env.JWT_REFRESH_SECRET || 'zylo_refresh_secret_456',
+    refreshSecret: resolveSecret('JWT_REFRESH_SECRET', 'zylo_refresh_secret_456'),
     refreshExpiration: process.env.JWT_REFRESH_EXPIRATION || '7d',
   },
   uploads: {
