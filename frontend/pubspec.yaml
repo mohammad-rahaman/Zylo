@@ -1,0 +1,50 @@
+name: zylo
+description: "Zylo - Modern Production-Quality Cross-Platform Messaging Application"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # State Management & Routing
+  flutter_riverpod: ^2.5.1
+  go_router: ^14.2.0
+
+  # Networking & Realtime
+  dio: ^5.4.3+1
+  socket_io_client: ^3.0.1
+
+  # Security & Storage
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.2.3
+
+  # Utilities & Media
+  intl: ^0.19.0
+  uuid: ^4.4.0
+  image_picker: ^1.1.2
+  file_picker: ^8.0.0
+  permission_handler: ^13.0.2
+  camera: ^0.12.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/app_icon/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/app_icon/zylo_icon.png"
+  min_sdk_android: 21

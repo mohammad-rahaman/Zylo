@@ -1,0 +1,67 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Backend Dependencies & Build
+backend/node_modules/
+backend/dist/
+backend/coverage/
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+backend/.turbo/
+backend/uploads/
+
+# Flutter & Dart
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+frontend/.pub-cache/
+frontend/.pub/
+frontend/build/
+frontend/ios/Pods/
+frontend/ios/.symlinks/
+frontend/ios/Flutter/Flutter.framework
+frontend/ios/Flutter/Flutter.podspec
+frontend/ios/Flutter/Generated.xcconfig
+frontend/ios/Flutter/app.framework
+frontend/android/.gradle/
+frontend/android/local.properties
+frontend/android/app/libs/
+frontend/linux/flutter/ephemeral/
+frontend/windows/flutter/ephemeral/
+frontend/web/icons/
+
+# Secrets, Keys & Credentials
+*.pem
+*.key
+*.cert
+*.jks
+*.keystore
+id_rsa
+google-services.json
+GoogleService-Info.plist
+firebase-adminsdk*.json
+service-account*.json
+
+# Logs & Temp
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.tmp/
+temp/

@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: zylo-mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_DATABASE: zylo
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - zylo-network
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: zylo-redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - zylo-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: zylo-backend
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MONGODB_URI: mongodb://mongodb:27017/zylo
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_ACCESS_SECRET: zylo_super_secret_jwt_access_key_change_in_production_12345
+      JWT_ACCESS_EXPIRATION: 15m
+      JWT_REFRESH_SECRET: zylo_super_secret_jwt_refresh_key_change_in_production_67890
+      JWT_REFRESH_EXPIRATION: 7d
+      UPLOAD_DRIVER: local
+      UPLOAD_DESTINATION: ./uploads
+    depends_on:
+      - mongodb
+      - redis
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - zylo-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: zylo-frontend
+    restart: always
+    ports:
+      - '8080:80'
+    depends_on:
+      - backend
+    networks:
+      - zylo-network
+
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  zylo-network:
+    driver: bridge
