@@ -40,10 +40,18 @@ class ApiConstants {
 
   static String get baseUrl => '$origin/api/v1';
 
-  /// Socket.IO origin. Passed as the same http(s) origin as the API; the
-  /// client negotiates the secure websocket (wss) transport when the origin
-  /// is https.
-  static String get socketUrl => origin;
+  /// Socket.IO origin with a WebSocket-compatible scheme derived from the API
+  /// origin: wss for an https origin (production), ws for http (local dev).
+  static String get socketUrl {
+    final o = origin;
+    if (o.startsWith('https://')) {
+      return o.replaceFirst('https://', 'wss://');
+    }
+    if (o.startsWith('http://')) {
+      return o.replaceFirst('http://', 'ws://');
+    }
+    return o;
+  }
 
   static String resolveMediaUrl(String? url) {
     if (url == null || url.isEmpty) return '';
