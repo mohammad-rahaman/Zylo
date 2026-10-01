@@ -1,6 +1,7 @@
 import {
   Injectable,
   BadRequestException,
+  InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -65,9 +66,18 @@ export class UploadsService {
 
     if (this.isCloudinaryConfigured) {
       return this.uploadToCloudinary(file, userId);
-    } else {
-      return this.saveToLocal(file, userId);
     }
+
+    // Local disk storage is a development-only fallback. In production we
+    // require Cloudinary so that uploads return publicly accessible URLs.
+    if (process.env.NODE_ENV === 'production') {
+      this.logger.error(
+        'Upload rejected: Cloudinary is not configured in production. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET.',
+      );
+      throw new InternalServerErrorException('Media storage is not configured');
+    }
+
+    return this.saveToLocal(file, userId);
   }
 
   private async uploadToCloudinary(file: Express.Multer.File, userId: string): Promise<UploadResult> {
@@ -118,9 +128,10 @@ export class UploadsService {
 
     await fs.promises.writeFile(filePath, file.buffer);
 
+    // Development-only URL. The Flutter client rewrites this localhost origin
+    // to whatever host the device can actually reach (see ApiConstants).
     const port = this.configService.get<number>('port', 3000);
-    const host = process.env.API_HOST || '192.168.1.2';
-    const url = `http://${host}:${port}/uploads/${userId}/${filename}`;
+    const url = `http://localhost:${port}/uploads/${userId}/${filename}`;
 
     return {
       url,
