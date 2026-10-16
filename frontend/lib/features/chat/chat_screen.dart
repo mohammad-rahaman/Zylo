@@ -157,7 +157,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         titleSpacing: 0,
-        backgroundColor: isDark ? const Color(0xFF161210) : const Color(0xFFFFF8F3),
+        backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -200,10 +200,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           Flexible(
                             child: Text(
                               otherUserName,
+                              // Inherits the app bar's serif; Instrument Serif has one weight.
                               style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -0.3,
+                                fontSize: 21,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: -0.2,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -230,15 +231,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                 otherUser?.lastSeen,
                                 otherUser?.isOnline ?? false,
                               ),
-                        style: TextStyle(
+                        // bodySmall carries the platform sans, overriding the app bar's serif.
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
                           fontSize: 12,
                           color: messagesState.isOtherTyping
-                              ? AppColors.primaryOrange
+                              ? (isDark ? AppColors.emberLight : AppColors.primaryOrange)
                               : (isDark
                                   ? AppColors.textSecondaryDark
                                   : AppColors.textSecondaryLight),
                           fontWeight: messagesState.isOtherTyping
-                              ? FontWeight.bold
+                              ? FontWeight.w600
                               : FontWeight.normal,
                         ),
                       ),

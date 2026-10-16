@@ -1,6 +1,17 @@
 # Zylo 💬
 
-> A modern, production-grade cross-platform WhatsApp-style messaging application built with **Flutter (Material 3)**, **NestJS**, **MongoDB Atlas**, **Redis**, and **Socket.IO**.
+[![CI](https://github.com/mohammad-rahaman/Zylo/actions/workflows/ci.yml/badge.svg)](https://github.com/mohammad-rahaman/Zylo/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![NestJS](https://img.shields.io/badge/NestJS-10.x-E0234E?logo=nestjs&logoColor=white)](https://nestjs.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com)
+[![Redis](https://img.shields.io/badge/Redis-7.x-DC382D?logo=redis&logoColor=white)](https://redis.io)
+[![Socket.IO](https://img.shields.io/badge/Socket.IO-4.x-010101?logo=socketdotio&logoColor=white)](https://socket.io)
+[![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker&logoColor=white)](https://www.docker.com)
+
+> A modern, production-grade cross-platform real-time messaging application built with **Flutter (Material 3 & Riverpod)**, **NestJS**, **MongoDB Atlas**, **Redis**, and **Socket.IO**.
 
 ---
 
@@ -444,6 +455,14 @@ cd frontend && flutter analyze
 
 ---
 
+## 👨‍💻 Author
+
+**Mohammad Miazur Rahaman**
+- GitHub: [@mohammad-rahaman](https://github.com/mohammad-rahaman)
+- Project Repository: [mohammad-rahaman/Zylo](https://github.com/mohammad-rahaman/Zylo)
+
+---
+
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

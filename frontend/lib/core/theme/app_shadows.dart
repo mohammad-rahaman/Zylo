@@ -1,41 +1,47 @@
 import 'package:flutter/material.dart';
 
-/// Centralized Zylo Glow and Elevation Shadow System
+/// Centralized Zylo Elevation System.
+///
+/// Soft, tight shadows with negative spread read as "lifted" rather than
+/// "glowing". Names are kept from the original glow system for compatibility.
 class AppShadows {
-  /// Signature Zylo soft orange ambient glow
+  /// Elevated surface with a faint warm lift (formerly an orange glow)
   static const BoxShadow orangeGlow = BoxShadow(
-    color: Color(0x55FF6B35),
-    blurRadius: 20,
-    spreadRadius: 2,
-    offset: Offset(0, 4),
-  );
-
-  /// Subtle button tap / highlight glow
-  static const BoxShadow buttonGlow = BoxShadow(
-    color: Color(0x66FF6B35),
-    blurRadius: 16,
-    offset: Offset(0, 6),
-  );
-
-  /// Low-key ambient glow for dark mode tiles
-  static const BoxShadow darkTileGlow = BoxShadow(
-    color: Color(0x40FF6B35),
-    blurRadius: 28,
-    spreadRadius: 0,
+    color: Color(0x1A6B2E18),
+    blurRadius: 22,
+    spreadRadius: -4,
     offset: Offset(0, 8),
   );
 
-  /// Premium light mode card shadow (warm cream tone)
-  static const BoxShadow cardLight = BoxShadow(
-    color: Color(0x1250280A),
-    blurRadius: 18,
+  /// Primary button lift — a whisper of the accent beneath the button
+  static const BoxShadow buttonGlow = BoxShadow(
+    color: Color(0x2E8E3D20),
+    blurRadius: 14,
+    spreadRadius: -4,
     offset: Offset(0, 6),
   );
 
-  /// Dark mode subtle elevation shadow
+  /// Dark mode tile elevation
+  static const BoxShadow darkTileGlow = BoxShadow(
+    color: Color(0x47000000),
+    blurRadius: 24,
+    spreadRadius: -6,
+    offset: Offset(0, 10),
+  );
+
+  /// Light mode card shadow
+  static const BoxShadow cardLight = BoxShadow(
+    color: Color(0x0F1B1A18),
+    blurRadius: 24,
+    spreadRadius: -6,
+    offset: Offset(0, 8),
+  );
+
+  /// Dark mode card shadow
   static const BoxShadow cardDark = BoxShadow(
-    color: Color(0x40000000),
-    blurRadius: 16,
-    offset: Offset(0, 4),
+    color: Color(0x52000000),
+    blurRadius: 20,
+    spreadRadius: -6,
+    offset: Offset(0, 8),
   );
 }

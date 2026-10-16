@@ -91,7 +91,7 @@ class MomentBadge extends StatelessWidget {
             label,
             style: TextStyle(
               color: badgeColor,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               fontSize: fontSize,
               letterSpacing: -0.2,
             ),

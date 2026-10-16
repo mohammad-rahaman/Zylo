@@ -130,9 +130,9 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text(
           'Settings',
-          style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
+          style: TextStyle(letterSpacing: -0.2),
         ),
-        backgroundColor: isDark ? const Color(0xFF161210) : const Color(0xFFFFF8F3),
+        backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
         elevation: 0,
       ),
       body: ZyloBackground(
@@ -240,7 +240,7 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.logout, color: AppColors.errorRed),
             title: const Text(
               'Log Out',
-              style: TextStyle(color: AppColors.errorRed, fontWeight: FontWeight.bold),
+              style: TextStyle(color: AppColors.errorRed, fontWeight: FontWeight.w600),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -262,7 +262,7 @@ class SettingsScreen extends ConsumerWidget {
         title,
         style: const TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
           color: Colors.grey,
           letterSpacing: 0.5,
         ),

@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ThemeModeNotifier extends StateNotifier<ThemeMode> {
   static const _key = 'zylo_theme_mode';
 
-  ThemeModeNotifier() : super(ThemeMode.system) {
+  // Zylo is dark-first: dark until the user picks something else.
+  ThemeModeNotifier() : super(ThemeMode.dark) {
     _loadTheme();
   }
 
@@ -14,10 +15,10 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
     final modeStr = prefs.getString(_key);
     if (modeStr == 'light') {
       state = ThemeMode.light;
-    } else if (modeStr == 'dark') {
-      state = ThemeMode.dark;
-    } else {
+    } else if (modeStr == 'system') {
       state = ThemeMode.system;
+    } else {
+      state = ThemeMode.dark;
     }
   }
 
@@ -29,7 +30,8 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
     } else if (mode == ThemeMode.dark) {
       await prefs.setString(_key, 'dark');
     } else {
-      await prefs.remove(_key);
+      // Stored explicitly so "System Default" survives restarts now that dark is the default.
+      await prefs.setString(_key, 'system');
     }
   }
 

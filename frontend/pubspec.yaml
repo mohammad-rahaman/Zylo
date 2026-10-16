@@ -42,9 +42,22 @@ flutter:
   uses-material-design: true
   assets:
     - assets/app_icon/
+  fonts:
+    # Display serif for screen titles (SIL Open Font License, see assets/fonts/OFL.txt)
+    - family: InstrumentSerif
+      fonts:
+        - asset: assets/fonts/InstrumentSerif-Regular.ttf
+        - asset: assets/fonts/InstrumentSerif-Italic.ttf
+          style: italic
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/app_icon/zylo_icon.png"
   min_sdk_android: 21
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: "assets/app_icon/zylo_icon.png"
+    background_color: "#0F0F0E"
+    theme_color: "#0F0F0E"

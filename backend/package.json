@@ -2,9 +2,9 @@
   "name": "zylo-backend",
   "version": "1.0.0",
   "description": "Production-quality NestJS REST API and Socket.IO Realtime Gateway for Zylo Messaging App",
-  "author": "Zylo Engineering Team",
+  "author": "Mohammad Miazur Rahaman",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

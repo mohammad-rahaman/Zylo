@@ -30,22 +30,27 @@ class MessageBubble extends StatelessWidget {
     final List<BoxShadow> bubbleShadow;
 
     if (isMe) {
-      bubbleBgColor = isDark ? const Color(0xFF261C18) : const Color(0xFFFFF2EB);
+      // Own messages: a soft ember tint over the surface (blush in light, warm graphite in dark)
+      bubbleBgColor = Color.lerp(
+        isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        AppColors.primaryOrange,
+        isDark ? 0.16 : 0.08,
+      )!;
       bubbleBorder = Border.all(
-        color: const Color(0xFFFF6B35).withValues(alpha: isDark ? 0.35 : 0.28),
+        color: AppColors.primaryOrange.withValues(alpha: isDark ? 0.22 : 0.14),
         width: 1.0,
       );
       bubbleShadow = [
         BoxShadow(
-          color: const Color(0xFFFF6B35).withValues(alpha: isDark ? 0.08 : 0.04),
-          blurRadius: 8,
+          color: Colors.black.withValues(alpha: isDark ? 0.16 : 0.03),
+          blurRadius: 6,
           offset: const Offset(0, 2),
         ),
       ];
     } else {
-      bubbleBgColor = isDark ? const Color(0xFF1C1C1E) : const Color(0xFFFFFFFF);
+      bubbleBgColor = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
       bubbleBorder = Border.all(
-        color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFEFE5DC),
+        color: isDark ? AppColors.borderDark : AppColors.borderLight,
         width: 1.0,
       );
       bubbleShadow = [
@@ -57,8 +62,8 @@ class MessageBubble extends StatelessWidget {
       ];
     }
 
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1614);
-    final timeColor = isDark ? Colors.white54 : const Color(0xFF8C7C75);
+    final textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final timeColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
 
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -162,7 +167,7 @@ class MessageBubble extends StatelessWidget {
             'Replying to',
             style: TextStyle(
               fontSize: 11,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               color: AppColors.primaryOrange,
             ),
           ),

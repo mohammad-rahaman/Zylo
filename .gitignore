@@ -65,3 +65,12 @@ yarn-error.log*
 pnpm-debug.log*
 .tmp/
 temp/
+
+# IDEs & Developer Tools
+.claude/
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+

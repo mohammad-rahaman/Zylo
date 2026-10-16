@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../widgets/zylo_brand.dart';
+import '../../widgets/zylo_button.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -28,9 +29,9 @@ class OnboardingScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppColors.primaryOrange.withValues(alpha: isDark ? 0.35 : 0.20),
-                    AppColors.secondaryOrange.withValues(alpha: isDark ? 0.15 : 0.08),
-                    Colors.transparent,
+                    AppColors.primaryOrange.withValues(alpha: isDark ? 0.14 : 0.07),
+                    AppColors.primaryOrange.withValues(alpha: isDark ? 0.05 : 0.025),
+                    AppColors.primaryOrange.withValues(alpha: 0.0),
                   ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
@@ -49,6 +50,7 @@ class OnboardingScreen extends StatelessWidget {
                   size: 38,
                   mode: ZyloBrandMode.stacked,
                   isDark: isDark,
+                  showMark: false, // the hero tile below carries the mark
                 ),
 
                 const Spacer(),
@@ -109,83 +111,30 @@ class OnboardingScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         // Primary CTA: "Get Started →" (large pill with circular arrow)
-                        InkWell(
-                          borderRadius: BorderRadius.circular(24),
-                          onTap: () {
+                        ZyloPrimaryButton(
+                          label: 'Get Started',
+                          trailingIcon: Icons.arrow_forward_rounded,
+                          height: 56,
+                          onPressed: () {
                             HapticFeedback.mediumImpact();
                             context.go('/register');
                           },
-                          child: Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(24),
-                              gradient: AppColors.primaryGradient,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x55FF6B35),
-                                  blurRadius: 16,
-                                  offset: Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const SizedBox(width: 32), // balance arrow pill
-                                const Text(
-                                  'Get Started',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: -0.2,
-                                  ),
-                                ),
-                                Container(
-                                  width: 34,
-                                  height: 34,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.arrow_forward_rounded,
-                                    color: AppColors.primaryOrange,
-                                    size: 18,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
                         const SizedBox(height: 12),
 
-                        // Secondary CTA: Surface "Log In" Pill
-                        InkWell(
-                          borderRadius: BorderRadius.circular(24),
-                          onTap: () {
-                            HapticFeedback.lightImpact();
-                            context.go('/login');
-                          },
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? AppColors.surfaceSubduedDark
-                                  : AppColors.surfaceSubduedLight,
-                              borderRadius: BorderRadius.circular(24),
+                        // Secondary CTA: quiet text action
+                        SizedBox(
+                          height: 50,
+                          width: double.infinity,
+                          child: TextButton(
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              context.go('/login');
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
                             ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Log In',
-                              style: TextStyle(
-                                color: isDark ? Colors.white : AppColors.textPrimaryLight,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: -0.2,
-                              ),
-                            ),
+                            child: const Text('Log In'),
                           ),
                         ),
                       ],

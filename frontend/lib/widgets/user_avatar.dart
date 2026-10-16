@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
+import '../core/theme/app_typography.dart';
 
 class UserAvatar extends StatelessWidget {
   final String? imageUrl;
@@ -28,27 +29,10 @@ class UserAvatar extends StatelessWidget {
     return name.trim().substring(0, 1).toUpperCase();
   }
 
-  Color _generateColor(String text) {
-    // Refined, warm social palette matching Zylo's identity
-    final colors = [
-      const Color(0xFFE05338), // Warm Terracotta
-      const Color(0xFFDE7A22), // Golden Amber
-      const Color(0xFF9E4770), // Dusty Plum
-      const Color(0xFF2E6F7E), // Deep Cyan/Teal
-      const Color(0xFF635694), // Warm Indigo
-      const Color(0xFFC76C47), // Burnt Clay
-      const Color(0xFF387D70), // Sage Slate
-    ];
-    int hash = 0;
-    for (int i = 0; i < text.length; i++) {
-      hash = text.codeUnitAt(i) + ((hash << 5) - hash);
-    }
-    return colors[hash.abs() % colors.length];
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppColors.emberLight : AppColors.primaryOrange;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -56,23 +40,14 @@ class UserAvatar extends StatelessWidget {
         Container(
           width: radius * 2,
           height: radius * 2,
+          // Active moment: a fine ember ring with a small gap around the photo.
+          padding: hasGlow ? const EdgeInsets.all(2.5) : null,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: hasGlow
-                  ? AppColors.primaryOrange
-                  : (isDark ? Colors.white.withValues(alpha: 0.12) : const Color(0x2050280A)),
-              width: hasGlow ? 2.0 : 1.2,
+              color: hasGlow ? accent : (isDark ? AppColors.borderDark : AppColors.borderLight),
+              width: hasGlow ? 1.5 : 1.0,
             ),
-            boxShadow: hasGlow
-                ? [
-                    BoxShadow(
-                      color: AppColors.primaryOrange.withValues(alpha: 0.35),
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                    ),
-                  ]
-                : null,
           ),
           child: ClipOval(
             child: imageUrl != null && imageUrl!.isNotEmpty
@@ -81,9 +56,9 @@ class UserAvatar extends StatelessWidget {
                     fit: BoxFit.cover,
                     width: radius * 2,
                     height: radius * 2,
-                    errorBuilder: (_, __, ___) => _buildInitials(),
+                    errorBuilder: (_, __, ___) => _buildInitials(isDark),
                   )
-                : _buildInitials(),
+                : _buildInitials(isDark),
           ),
         ),
         if (showOnlineStatus && isOnline)
@@ -100,12 +75,6 @@ class UserAvatar extends StatelessWidget {
                   color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
                   width: 2.0,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.onlineGreen.withValues(alpha: 0.45),
-                    blurRadius: 6,
-                  ),
-                ],
               ),
             ),
           ),
@@ -113,18 +82,14 @@ class UserAvatar extends StatelessWidget {
     );
   }
 
-  Widget _buildInitials() {
+  Widget _buildInitials(bool isDark) {
+    // Neutral stone/graphite with serif initials — the accent is saved for moment rings.
     return Container(
-      color: _generateColor(name),
+      color: isDark ? AppColors.surfaceSubduedDark : const Color(0xFFE9E5DE),
       alignment: Alignment.center,
       child: Text(
         _initials,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w800,
-          fontSize: radius * 0.75,
-          letterSpacing: -0.5,
-        ),
+        style: AppTypography.serifTitle(fontSize: radius * 0.9, isDark: isDark).copyWith(height: 1.0),
       ),
     );
   }

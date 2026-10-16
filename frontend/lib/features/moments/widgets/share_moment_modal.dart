@@ -181,7 +181,7 @@ class _ShareMomentModalState extends ConsumerState<ShareMomentModal> {
                 Expanded(
                   child: Text(
                     'Moment photo shared with ${widget.targetUser.displayName}!',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -250,7 +250,7 @@ class _ShareMomentModalState extends ConsumerState<ShareMomentModal> {
                             'SHARE A MOMENT',
                             style: TextStyle(
                               fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1.0,
                               color: AppColors.primaryOrange,
                             ),
@@ -262,7 +262,7 @@ class _ShareMomentModalState extends ConsumerState<ShareMomentModal> {
                         'with ${widget.targetUser.displayName}',
                         style: const TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -421,7 +421,7 @@ class _ShareMomentModalState extends ConsumerState<ShareMomentModal> {
                       icon: Icons.photo_library_rounded,
                       title: 'Select Photo',
                       subtitle: 'Gallery',
-                      color: const Color(0xFFC32AA3),
+                      color: AppColors.momentSparkle,
                       onTap: () => _pickImage(ImageSource.gallery),
                     ),
                   ),
@@ -485,7 +485,7 @@ class _ShareMomentModalState extends ConsumerState<ShareMomentModal> {
                 title,
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 2),

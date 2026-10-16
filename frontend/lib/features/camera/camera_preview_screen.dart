@@ -121,7 +121,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                       decoration: BoxDecoration(
                         color: Colors.black.withValues(alpha: 0.55),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: const Color(0x40FF6B35)),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
                       ),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
@@ -132,7 +132,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                             'MOMENT PREVIEW',
                             style: TextStyle(
                               color: Colors.white,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w600,
                               fontSize: 11,
                               letterSpacing: 1.5,
                             ),
@@ -244,7 +244,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                                   color: isSelected
                                       ? AppColors.primaryOrange
                                       : Colors.white70,
-                                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                                   fontSize: 11,
                                 ),
                               ),
@@ -290,7 +290,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                                         'Retake',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w600,
                                           fontSize: 15,
                                         ),
                                       ),
@@ -309,9 +309,9 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                           flex: 2,
                           child: Container(
                             decoration: BoxDecoration(
-                              gradient: AppColors.primaryGradient,
+                              color: AppColors.emberLight.withValues(alpha: 0.16),
                               borderRadius: AppRadius.pillBorder,
-                              boxShadow: const [AppShadows.buttonGlow],
+                              border: Border.all(color: AppColors.emberLight.withValues(alpha: 0.9)),
                             ),
                             child: Material(
                               color: Colors.transparent,
@@ -327,7 +327,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                                       Text(
                                         'Next',
                                         style: TextStyle(
-                                          fontWeight: FontWeight.w800,
+                                          fontWeight: FontWeight.w600,
                                           fontSize: 16,
                                           color: Colors.white,
                                         ),

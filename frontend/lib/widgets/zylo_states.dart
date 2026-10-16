@@ -1,8 +1,9 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
-import '../core/theme/app_radius.dart';
 import '../core/theme/app_shadows.dart';
 import 'zylo_brand.dart';
+import 'zylo_button.dart';
 
 /// Signature Zylo Empty State Component
 class ZyloEmptyState extends StatelessWidget {
@@ -42,15 +43,15 @@ class ZyloEmptyState extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFFFF6B35).withValues(alpha: isDark ? 0.22 : 0.14),
-                    const Color(0xFFFF9B71).withValues(alpha: isDark ? 0.08 : 0.04),
+                    AppColors.primaryOrange.withValues(alpha: isDark ? 0.12 : 0.08),
+                    AppColors.primaryOrange.withValues(alpha: isDark ? 0.03 : 0.02),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 border: Border.all(
-                  color: const Color(0xFFFF6B35).withValues(alpha: 0.35),
-                  width: 1.5,
+                  color: AppColors.primaryOrange.withValues(alpha: isDark ? 0.22 : 0.16),
+                  width: 1,
                 ),
                 boxShadow: const [AppShadows.orangeGlow],
               ),
@@ -70,7 +71,7 @@ class ZyloEmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 22,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w600,
                 letterSpacing: -0.4,
               ),
             ),
@@ -86,30 +87,12 @@ class ZyloEmptyState extends StatelessWidget {
             ),
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 24),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
-                  borderRadius: AppRadius.pillBorder,
-                  boxShadow: const [AppShadows.buttonGlow],
-                ),
-                child: ElevatedButton.icon(
-                  onPressed: onAction,
-                  icon: const Icon(Icons.add_rounded, size: 20, color: Colors.white),
-                  label: Text(
-                    actionLabel!,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillBorder),
-                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-                  ),
-                ),
+              ZyloPrimaryButton(
+                label: actionLabel!,
+                onPressed: onAction,
+                icon: Icons.add_rounded,
+                height: 46,
+                expand: false,
               ),
             ],
           ],
@@ -131,23 +114,15 @@ class ZyloLoadingIndicator extends StatefulWidget {
 class _ZyloLoadingIndicatorState extends State<ZyloLoadingIndicator>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _scaleAnimation;
-  late final Animation<double> _opacityAnimation;
 
   @override
   void initState() {
     super.initState();
+    // One full lap of the moment dot around the orbit.
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    )..repeat(reverse: true);
-
-    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.15).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    _opacityAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+      duration: const Duration(milliseconds: 1400),
+    )..repeat();
   }
 
   @override
@@ -162,12 +137,11 @@ class _ZyloLoadingIndicatorState extends State<ZyloLoadingIndicator>
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
-          return Opacity(
-            opacity: _opacityAnimation.value,
-            child: Transform.scale(
-              scale: _scaleAnimation.value,
-              child: ZyloSymbol(size: widget.size, hasGlow: true),
-            ),
+          final lap = Curves.easeInOut.transform(_controller.value) * 2 * math.pi;
+          return ZyloSymbol(
+            size: widget.size,
+            hasGlow: true,
+            phase: ZyloMarkPainter.restingPhase + lap,
           );
         },
       ),
@@ -224,26 +198,16 @@ class _ZyloSearchBarState extends State<ZyloSearchBar> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _isFocused
-              ? AppColors.primaryOrange
+              ? (isDark ? AppColors.emberLight : AppColors.primaryOrange).withValues(alpha: 0.8)
               : (isDark ? AppColors.borderDark : AppColors.borderLight),
-          width: _isFocused ? 1.5 : 1.0,
         ),
-        boxShadow: _isFocused
-            ? [
-                BoxShadow(
-                  color: AppColors.primaryOrange.withValues(alpha: 0.25),
-                  blurRadius: 12,
-                  spreadRadius: 1,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.04),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextField(
         controller: widget.controller,
@@ -256,10 +220,10 @@ class _ZyloSearchBarState extends State<ZyloSearchBar> {
             color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
             fontSize: 14,
           ),
-          prefixIcon: const Icon(
+          prefixIcon: Icon(
             Icons.search_rounded,
             size: 20,
-            color: AppColors.primaryOrange,
+            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
           ),
           suffixIcon: widget.controller.text.isNotEmpty
               ? IconButton(

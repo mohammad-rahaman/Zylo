@@ -7,6 +7,7 @@ import '../../providers/chat_provider.dart';
 import '../../providers/moment_provider.dart';
 import '../../widgets/user_avatar.dart';
 import 'widgets/share_moment_modal.dart';
+import '../../core/theme/app_typography.dart';
 
 class MomentsScreen extends ConsumerWidget {
   const MomentsScreen({super.key});
@@ -44,7 +45,7 @@ class MomentsScreen extends ConsumerWidget {
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Text(
                     'Share Moment with...',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Flexible(
@@ -146,7 +147,7 @@ class MomentsScreen extends ConsumerWidget {
         icon: const Icon(Icons.camera_alt_rounded, color: Colors.white),
         label: const Text(
           'Share Moment',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         onPressed: () => _handleNewMoment(context, ref, momentsState.moments),
       ),
@@ -168,11 +169,7 @@ class MomentsScreen extends ConsumerWidget {
                         children: [
                           const Text(
                             'Moments',
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: -0.5,
-                            ),
+                            style: TextStyle(fontFamily: AppTypography.serifFamily, fontSize: 42, height: 1.1, letterSpacing: -0.3),
                           ),
                           const SizedBox(width: 8),
                           Container(
@@ -233,7 +230,7 @@ class MomentsScreen extends ConsumerWidget {
                           const SizedBox(height: 20),
                           const Text(
                             'No Moments yet.',
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -322,7 +319,7 @@ class MomentsScreen extends ConsumerWidget {
                       'YOUR MOMENT',
                       style: TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1.0,
                         color: AppColors.primaryOrange,
                       ),
@@ -377,7 +374,7 @@ class MomentsScreen extends ConsumerWidget {
                         friendName,
                         style: const TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 3),

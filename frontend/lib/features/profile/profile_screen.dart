@@ -9,6 +9,7 @@ import '../../providers/moment_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../widgets/user_avatar.dart';
 import '../../widgets/zylo_background.dart';
+import '../../core/theme/app_typography.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -25,7 +26,7 @@ class ProfileScreen extends ConsumerWidget {
       builder: (ctx) {
         return SafeArea(
           child: Container(
-            color: isDark ? const Color(0xFF191513) : const Color(0xFFFFF8F3),
+            color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -35,7 +36,7 @@ class ProfileScreen extends ConsumerWidget {
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Text(
                     'Appearance',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 ),
                 ListTile(
@@ -133,7 +134,7 @@ class ProfileScreen extends ConsumerWidget {
               // Header
               const Text(
                 'Profile',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: -0.6),
+                style: TextStyle(fontFamily: AppTypography.serifFamily, fontSize: 44, height: 1.1, letterSpacing: -0.3),
               ),
               const SizedBox(height: 20),
 
@@ -141,15 +142,15 @@ class ProfileScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1B1715) : const Color(0xFFFFFFFF),
+                  color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
                   borderRadius: BorderRadius.circular(26),
                   border: Border.all(
-                    color: isDark ? const Color(0x35FF6B35) : const Color(0x1850280A),
+                    color: isDark ? AppColors.borderDark : AppColors.borderLight,
                     width: 1.2,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFF6B35).withValues(alpha: isDark ? 0.08 : 0.04),
+                      color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.035),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
@@ -167,7 +168,7 @@ class ProfileScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     Text(
                       user?.displayName ?? 'Zylo User',
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.3),
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -0.3),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -212,7 +213,7 @@ class ProfileScreen extends ConsumerWidget {
                             '${momentsState.moments.length} Active Moments',
                             style: const TextStyle(
                               fontSize: 14,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.primaryOrange,
                             ),
                           ),
@@ -225,7 +226,7 @@ class ProfileScreen extends ConsumerWidget {
                     // Edit Profile Button
                     Container(
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF26201E) : const Color(0xFFF7ECE4),
+                        color: isDark ? AppColors.surfaceSubduedDark : AppColors.surfaceSubduedLight,
                         borderRadius: AppRadius.pillBorder,
                         border: Border.all(
                           color: AppColors.primaryOrange.withValues(alpha: 0.4),
@@ -252,7 +253,7 @@ class ProfileScreen extends ConsumerWidget {
                                   'Edit Profile',
                                   style: TextStyle(
                                     fontSize: 13,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w600,
                                     color: AppColors.primaryOrange,
                                   ),
                                 ),
@@ -269,14 +270,14 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(height: 24),
               const Text(
                 'Settings & Preferences',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, letterSpacing: -0.2),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: -0.2),
               ),
               const SizedBox(height: 12),
 
               // Grouped Settings Card
               Container(
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1B1715) : const Color(0xFFFFFFFF),
+                  color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
                   borderRadius: BorderRadius.circular(22),
                   border: Border.all(
                     color: isDark ? AppColors.borderDark : AppColors.borderLight,
@@ -304,7 +305,7 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           child: const Icon(Icons.palette_outlined, color: AppColors.primaryOrange, size: 20),
                         ),
-                        title: const Text('Appearance', style: TextStyle(fontWeight: FontWeight.w700)),
+                        title: const Text('Appearance', style: TextStyle(fontWeight: FontWeight.w600)),
                         subtitle: Text(themeLabel, style: const TextStyle(fontSize: 12)),
                         trailing: const Icon(Icons.chevron_right_rounded),
                         onTap: () => _showThemeSelector(context, ref),
@@ -314,12 +315,12 @@ class ProfileScreen extends ConsumerWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFDE7A22).withValues(alpha: 0.12),
+                            color: AppColors.primaryOrange.withValues(alpha: 0.10),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.settings_outlined, color: Color(0xFFDE7A22), size: 20),
+                          child: const Icon(Icons.settings_outlined, color: AppColors.primaryOrange, size: 20),
                         ),
-                        title: const Text('Account & Privacy', style: TextStyle(fontWeight: FontWeight.w700)),
+                        title: const Text('Account & Privacy', style: TextStyle(fontWeight: FontWeight.w600)),
                         subtitle: const Text('Notifications, security, blocked users', style: TextStyle(fontSize: 12)),
                         trailing: const Icon(Icons.chevron_right_rounded),
                         onTap: () => context.push('/settings'),
@@ -334,7 +335,7 @@ class ProfileScreen extends ConsumerWidget {
               // Log Out Button
               Container(
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1B1715) : const Color(0xFFFFFFFF),
+                  color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(
                     color: AppColors.errorRed.withValues(alpha: 0.35),
@@ -355,7 +356,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     title: const Text(
                       'Log Out',
-                      style: TextStyle(color: AppColors.errorRed, fontWeight: FontWeight.w700),
+                      style: TextStyle(color: AppColors.errorRed, fontWeight: FontWeight.w600),
                     ),
                     onTap: () => _confirmLogout(context, ref),
                   ),

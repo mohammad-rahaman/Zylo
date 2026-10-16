@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_shadows.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../models/conversation.dart';
 import '../../models/moment.dart';
@@ -17,6 +16,8 @@ import '../../widgets/user_avatar.dart';
 import '../../widgets/moment_badge.dart';
 import '../../widgets/zylo_background.dart';
 import '../../widgets/zylo_states.dart';
+import '../../widgets/zylo_button.dart';
+import '../../core/theme/app_typography.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
   final String userId;
@@ -195,9 +196,9 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
       appBar: AppBar(
         title: Text(
           user?.resolvedName ?? (isMe ? 'My Profile' : 'Profile'),
-          style: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
+          style: const TextStyle(letterSpacing: -0.2),
         ),
-        backgroundColor: isDark ? const Color(0xFF161210) : const Color(0xFFFFF8F3),
+        backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -287,11 +288,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
             Text(
               user.resolvedName,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.4,
-              ),
+              style: const TextStyle(fontFamily: AppTypography.serifFamily, fontSize: 34, height: 1.1, letterSpacing: -0.3),
             ),
 
             // 3. Username if available
@@ -315,7 +312,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
               style: TextStyle(
                 fontSize: 13,
                 color: user.isOnline ? AppColors.onlineGreen : Colors.grey,
-                fontWeight: user.isOnline ? FontWeight.bold : FontWeight.normal,
+                fontWeight: user.isOnline ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
 
@@ -333,92 +330,34 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Message Button
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      borderRadius: AppRadius.pillBorder,
-                      boxShadow: const [AppShadows.buttonGlow],
-                    ),
-                    child: ElevatedButton.icon(
-                      onPressed: _isLoadingAction ? null : () => _startChat(user),
-                      icon: const Icon(Icons.chat_bubble_rounded, size: 18, color: Colors.white),
-                      label: const Text(
-                        'Message',
-                        style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillBorder),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      ),
-                    ),
+                  ZyloPrimaryButton(
+                    label: 'Message',
+                    icon: Icons.chat_bubble_outline_rounded,
+                    height: 46,
+                    expand: false,
+                    onPressed: _isLoadingAction ? null : () => _startChat(user),
                   ),
                   const SizedBox(width: 12),
 
                   // Send Moment Button
-                  Container(
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-                      borderRadius: AppRadius.pillBorder,
-                      border: Border.all(
-                        color: AppColors.primaryOrange.withValues(alpha: 0.7),
-                        width: 1.5,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryOrange.withValues(alpha: 0.12),
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton.icon(
+                  SizedBox(
+                    height: 46,
+                    child: OutlinedButton.icon(
                       onPressed: () => _sendMoment(user),
-                      icon: const Icon(
-                        Icons.camera_alt_rounded,
-                        size: 18,
-                        color: AppColors.primaryOrange,
-                      ),
-                      label: const Text(
-                        'Send Moment',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primaryOrange,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillBorder),
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                      ),
+                      icon: const Icon(Icons.camera_alt_outlined, size: 18),
+                      label: const Text('Send Moment'),
                     ),
                   ),
                 ],
               )
             else
               // Self Profile: Edit Profile Button
-              Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
-                  borderRadius: AppRadius.pillBorder,
-                  boxShadow: const [AppShadows.buttonGlow],
-                ),
-                child: ElevatedButton.icon(
-                  onPressed: () => context.push('/edit-profile'),
-                  icon: const Icon(Icons.edit_rounded, size: 18, color: Colors.white),
-                  label: const Text(
-                    'Edit Profile',
-                    style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillBorder),
-                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
-                  ),
-                ),
+              ZyloPrimaryButton(
+                label: 'Edit Profile',
+                icon: Icons.edit_outlined,
+                height: 46,
+                expand: false,
+                onPressed: () => context.push('/edit-profile'),
               ),
 
             const SizedBox(height: 24),
@@ -440,7 +379,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                             'YOUR MOMENT',
                             style: TextStyle(
                               fontSize: 12,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1.2,
                               color: AppColors.primaryOrange,
                             ),
@@ -454,7 +393,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                         moment.daysTogetherText,
                         style: const TextStyle(
                           fontSize: 20,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
                         ),
                       ),
@@ -471,26 +410,12 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius: AppRadius.pillBorder,
-                          boxShadow: const [AppShadows.buttonGlow],
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: () => _sendMoment(user),
-                          icon: const Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
-                          label: const Text(
-                            'Share Moment Photo ✨',
-                            style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillBorder),
-                            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-                          ),
-                        ),
+                      ZyloPrimaryButton(
+                        label: 'Share Moment Photo ✨',
+                        icon: Icons.camera_alt_outlined,
+                        height: 46,
+                        expand: false,
+                        onPressed: () => _sendMoment(user),
                       ),
                     ],
                   ),
@@ -504,7 +429,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       const SizedBox(height: 8),
                       const Text(
                         'Share Daily Moments',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: -0.2),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, letterSpacing: -0.2),
                       ),
                       const SizedBox(height: 6),
                       Text(
@@ -521,26 +446,12 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: AppColors.primaryGradient,
-                              borderRadius: AppRadius.pillBorder,
-                              boxShadow: const [AppShadows.buttonGlow],
-                            ),
-                            child: ElevatedButton.icon(
-                              onPressed: _isLoadingAction ? null : () => _sendMoment(user),
-                              icon: const Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
-                              label: const Text(
-                                'Send Moment',
-                                style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillBorder),
-                                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                              ),
-                            ),
+                          ZyloPrimaryButton(
+                            label: 'Send Moment',
+                            icon: Icons.camera_alt_outlined,
+                            height: 46,
+                            expand: false,
+                            onPressed: _isLoadingAction ? null : () => _sendMoment(user),
                           ),
                           const SizedBox(width: 10),
                           OutlinedButton(
@@ -552,7 +463,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                 color: isDark ? AppColors.borderDark : AppColors.borderLight,
                               ),
                             ),
-                            child: const Text('Start', style: TextStyle(fontWeight: FontWeight.w700)),
+                            child: const Text('Start', style: TextStyle(fontWeight: FontWeight.w600)),
                           ),
                         ],
                       ),
@@ -573,7 +484,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                     style: TextStyle(
                       color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                       fontSize: 11,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1.0,
                     ),
                   ),
@@ -592,7 +503,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       style: TextStyle(
                         color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1.0,
                       ),
                     ),

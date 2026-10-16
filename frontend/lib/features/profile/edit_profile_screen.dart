@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_shadows.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../services/upload_service.dart';
 import '../../widgets/user_avatar.dart';
 import '../../widgets/zylo_background.dart';
 import '../../widgets/zylo_states.dart';
+import '../../widgets/zylo_button.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -94,9 +93,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       appBar: AppBar(
         title: const Text(
           'Edit Profile',
-          style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
+          style: TextStyle(letterSpacing: -0.2),
         ),
-        backgroundColor: isDark ? const Color(0xFF161210) : const Color(0xFFFFF8F3),
+        backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
         elevation: 0,
       ),
       body: ZyloBackground(
@@ -129,15 +128,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         child: Container(
                           width: 36,
                           height: 36,
-                          decoration: const BoxDecoration(
-                            gradient: AppColors.primaryGradient,
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
                             shape: BoxShape.circle,
-                            boxShadow: [AppShadows.buttonGlow],
+                            border: Border.all(
+                              color: isDark ? AppColors.emberLight : AppColors.primaryOrange,
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.camera_alt_rounded,
+                          child: Icon(
+                            Icons.camera_alt_outlined,
                             size: 18,
-                            color: Colors.white,
+                            color: isDark ? AppColors.emberLight : AppColors.primaryOrange,
                           ),
                         ),
                       ),
@@ -156,7 +157,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       'DISPLAY NAME',
                       style: TextStyle(
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1.0,
                         color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                       ),
@@ -176,7 +177,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       'BIO',
                       style: TextStyle(
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1.0,
                         color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                       ),
@@ -208,7 +209,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         ),
                         Text(
                           '@${user?.username ?? ''}',
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
@@ -236,36 +237,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
               const SizedBox(height: 32),
 
-              Container(
-                width: double.infinity,
-                height: 52,
-                decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
-                  borderRadius: AppRadius.pillBorder,
-                  boxShadow: const [AppShadows.buttonGlow],
-                ),
-                child: ElevatedButton(
-                  onPressed: isSaving ? null : _saveProfile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillBorder),
-                  ),
-                  child: isSaving
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                        )
-                      : const Text(
-                          'Save Changes',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                ),
+              ZyloPrimaryButton(
+                label: 'Save Changes',
+                isLoading: isSaving,
+                onPressed: _saveProfile,
               ),
             ],
           ),

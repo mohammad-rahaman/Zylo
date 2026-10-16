@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../../core/services/permission_service.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_shadows.dart';
 import '../../../models/message.dart';
 
 class ChatInputBar extends StatefulWidget {
@@ -122,7 +121,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
       builder: (ctx) {
         return SafeArea(
           child: Container(
-            color: isDark ? const Color(0xFF191513) : const Color(0xFFFFF8F3),
+            color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -141,7 +140,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                   children: [
                     _buildAttachmentOption(
                       icon: Icons.image_rounded,
-                      color: const Color(0xFFFF6B35),
+                      color: AppColors.primaryOrange,
                       label: 'Photos',
                       onTap: () {
                         Navigator.pop(ctx);
@@ -150,7 +149,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                     ),
                     _buildAttachmentOption(
                       icon: Icons.camera_alt_rounded,
-                      color: const Color(0xFFFF8A4C),
+                      color: AppColors.primaryOrange,
                       label: 'Camera',
                       onTap: () {
                         Navigator.pop(ctx);
@@ -159,7 +158,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                     ),
                     _buildAttachmentOption(
                       icon: Icons.insert_drive_file_rounded,
-                      color: const Color(0xFFDE7A22),
+                      color: AppColors.primaryOrange,
                       label: 'Document',
                       onTap: () {
                         Navigator.pop(ctx);
@@ -168,7 +167,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                     ),
                     _buildAttachmentOption(
                       icon: Icons.location_on_rounded,
-                      color: const Color(0xFFE05338),
+                      color: AppColors.primaryOrange,
                       label: 'Location',
                       onTap: () {
                         Navigator.pop(ctx);
@@ -245,7 +244,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1A18) : const Color(0xFFFFF2EB),
+              color: isDark ? AppColors.surfaceSubduedDark : AppColors.surfaceSubduedLight,
               border: Border(
                 top: BorderSide(
                   color: isDark ? AppColors.borderDark : AppColors.borderLight,
@@ -264,7 +263,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                         'Replying to message',
                         style: TextStyle(
                           fontSize: 11,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.primaryOrange,
                         ),
                       ),
@@ -292,7 +291,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
           padding: const EdgeInsets.fromLTRB(14, 6, 14, 12),
           child: Container(
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1A1614) : const Color(0xFFFFFFFF),
+              color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
               borderRadius: BorderRadius.circular(26),
               border: Border.all(
                 color: _hasText
@@ -349,7 +348,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 IconButton(
                   icon: Icon(
                     Icons.add_circle_outline_rounded,
-                    color: isDark ? AppColors.textSecondaryDark : const Color(0xFF7A6860),
+                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                     size: 22,
                   ),
                   onPressed: _showAttachmentSheet,
@@ -360,7 +359,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                   IconButton(
                     icon: Icon(
                       Icons.camera_alt_outlined,
-                      color: isDark ? AppColors.textSecondaryDark : const Color(0xFF7A6860),
+                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                       size: 21,
                     ),
                     onPressed: () => _pickImage(ImageSource.camera),
@@ -387,17 +386,22 @@ class _ChatInputBarState extends State<ChatInputBar> {
                         height: 36,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: _hasText ? AppColors.primaryGradient : null,
                           color: _hasText
-                              ? null
-                              : (isDark ? Colors.white10 : const Color(0x1050280A)),
-                          boxShadow: _hasText ? const [AppShadows.buttonGlow] : null,
+                              ? (isDark ? AppColors.emberLight : AppColors.primaryOrange)
+                                  .withValues(alpha: isDark ? 0.16 : 0.10)
+                              : (isDark ? AppColors.surfaceSubduedDark : AppColors.surfaceSubduedLight),
+                          border: Border.all(
+                            color: _hasText
+                                ? (isDark ? AppColors.emberLight : AppColors.primaryOrange)
+                                    .withValues(alpha: 0.85)
+                                : (isDark ? AppColors.borderDark : AppColors.borderLight),
+                          ),
                         ),
                         child: Center(
                           child: Icon(
                             Icons.arrow_upward_rounded,
                             color: _hasText
-                                ? Colors.white
+                                ? (isDark ? AppColors.emberLight : AppColors.primaryOrange)
                                 : (isDark ? Colors.white30 : Colors.black26),
                             size: 19,
                           ),

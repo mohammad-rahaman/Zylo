@@ -354,18 +354,18 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0x40FF6B35)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ZyloSymbol(size: 16, hasGlow: false),
+                    ZyloSymbol(size: 18, hasGlow: false, isDark: true),
                     SizedBox(width: 6),
                     Text(
                       'Zylo Camera',
                       style: TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         fontSize: 13,
                         letterSpacing: -0.2,
                       ),
@@ -453,7 +453,7 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
                             filter.displayName,
                             style: TextStyle(
                               color: Colors.white,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                               fontSize: 13,
                             ),
                           ),

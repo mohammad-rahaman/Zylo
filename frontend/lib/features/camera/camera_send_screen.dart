@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_shadows.dart';
 import '../../models/user.dart';
 import '../../models/moment.dart';
 import '../../models/moment_shortcut.dart';
@@ -18,6 +17,7 @@ import '../../services/upload_service.dart';
 import '../../widgets/moment_badge.dart';
 import '../../widgets/user_avatar.dart';
 import 'camera_filters.dart';
+import '../../widgets/zylo_button.dart';
 
 class CameraSendScreen extends ConsumerStatefulWidget {
   final String imagePath;
@@ -170,7 +170,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
               Expanded(
                 child: Text(
                   'Moment sent to $count recipient${count > 1 ? 's' : ''}!',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ],
@@ -230,7 +230,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
                     children: [
                       const Text(
                         'Create Quick Send',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close_rounded),
@@ -357,7 +357,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: const Text('Save Shortcut', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Save Shortcut', style: TextStyle(fontWeight: FontWeight.w600)),
                   ),
                 ],
               ),
@@ -387,7 +387,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
       appBar: AppBar(
-        title: const Text('Send Moment', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Send Moment', style: TextStyle(fontWeight: FontWeight.w600)),
         elevation: 0,
       ),
       body: Stack(
@@ -462,7 +462,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
                                     style: const TextStyle(
                                       color: AppColors.primaryOrange,
                                       fontSize: 11,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
@@ -486,7 +486,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
                         'Quick Send',
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
                         ),
                       ),
@@ -516,7 +516,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
                                         color: isAllSelected
                                             ? AppColors.primaryOrange
                                             : (isDark ? Colors.white70 : Colors.black87),
-                                        fontWeight: isAllSelected ? FontWeight.bold : FontWeight.w500,
+                                        fontWeight: isAllSelected ? FontWeight.w600 : FontWeight.w500,
                                       ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(16),
@@ -538,7 +538,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
                                     'Create',
                                     style: TextStyle(
                                       color: AppColors.primaryOrange,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                   backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
@@ -580,7 +580,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
                         'Contacts',
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
                         ),
                       ),
@@ -674,7 +674,7 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
                                     child: Text(
                                       user.resolvedName,
                                       style: TextStyle(
-                                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.bold,
+                                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                                         fontSize: 15,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -748,49 +748,20 @@ class _CameraSendScreenState extends ConsumerState<CameraSendScreen> {
             right: 20,
             bottom: 24,
             child: SafeArea(
-              child: Container(
+              child: DecoratedBox(
+                // Solid backing so the list never shows through the translucent button.
                 decoration: BoxDecoration(
-                  gradient: _selectedUserIds.isNotEmpty ? AppColors.primaryGradient : null,
-                  color: _selectedUserIds.isEmpty
-                      ? (isDark ? const Color(0xFF26201E) : const Color(0xFFE2D6CE))
-                      : null,
-                  borderRadius: AppRadius.pillBorder,
-                  boxShadow: _selectedUserIds.isNotEmpty ? const [AppShadows.buttonGlow] : null,
+                  color: isDark ? AppColors.bgDark : AppColors.bgLight,
+                  borderRadius: AppRadius.mdBorder,
                 ),
-                child: ElevatedButton(
-                  onPressed: (_isSending || _selectedUserIds.isEmpty) ? null : _handleSend,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    disabledBackgroundColor: Colors.transparent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillBorder),
-                  ),
-                  child: _isSending
-                      ? const SizedBox(
-                          height: 22,
-                          width: 22,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text('✨', style: TextStyle(fontSize: 18)),
-                            const SizedBox(width: 8),
-                            Text(
-                              _selectedUserIds.isEmpty
-                                  ? 'SELECT RECIPIENTS'
-                                  : 'SEND MOMENT (${_selectedUserIds.length})',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 16,
-                                letterSpacing: 0.5,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
+                child: ZyloPrimaryButton(
+                  label: _selectedUserIds.isEmpty
+                      ? 'Select recipients'
+                      : 'Send moment (${_selectedUserIds.length})',
+                  icon: Icons.auto_awesome_outlined,
+                  height: 54,
+                  isLoading: _isSending,
+                  onPressed: _selectedUserIds.isEmpty ? null : _handleSend,
                 ),
               ),
             ),

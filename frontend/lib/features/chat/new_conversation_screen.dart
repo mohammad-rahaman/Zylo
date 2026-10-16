@@ -58,9 +58,9 @@ class _NewConversationScreenState extends ConsumerState<NewConversationScreen> {
       appBar: AppBar(
         title: const Text(
           'Select Contact',
-          style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
+          style: TextStyle(letterSpacing: -0.2),
         ),
-        backgroundColor: isDark ? const Color(0xFF161210) : const Color(0xFFFFF8F3),
+        backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
         elevation: 0,
       ),
       body: ZyloBackground(
@@ -135,7 +135,7 @@ class _NewConversationScreenState extends ConsumerState<NewConversationScreen> {
                                       Text(
                                         user.displayName,
                                         style: const TextStyle(
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w600,
                                           fontSize: 15,
                                         ),
                                       ),

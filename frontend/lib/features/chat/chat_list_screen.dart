@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../models/user.dart';
 import '../../models/conversation.dart';
@@ -16,6 +17,7 @@ import '../../widgets/user_avatar.dart';
 import '../../widgets/moment_badge.dart';
 import '../../widgets/zylo_background.dart';
 import '../../widgets/zylo_brand.dart';
+import '../../widgets/zylo_button.dart';
 import '../../widgets/zylo_states.dart';
 import 'widgets/message_status_icon.dart';
 
@@ -29,6 +31,8 @@ class ChatListScreen extends ConsumerStatefulWidget {
 class _ChatListScreenState extends ConsumerState<ChatListScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchFilter = '';
+
+  static const double _panelRadius = 18;
 
   @override
   void dispose() {
@@ -60,67 +64,52 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
           username.toLowerCase().contains(_searchFilter.toLowerCase());
     }).toList();
 
+    final border = isDark ? AppColors.borderDark : AppColors.borderLight;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: ZyloBackground(
         intensity: ZyloBackgroundIntensity.subtle,
         showTopGlow: true,
-        showBottomGlow: true,
+        showBottomGlow: false,
         showAmbientCanvas: true,
         child: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Premium Zylo Header
+              // 1. Header: wordmark + new chat
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 10),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ZyloBrand(
-                      size: 26,
+                      size: 24,
                       isDark: isDark,
                       animate: true,
                     ),
-                    Row(
-                      children: [
-                        // New Chat / Search People Button with Surface Container
-                        Container(
-                          decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF1E1A18) : const Color(0xFFF7ECE4),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: isDark ? const Color(0x30FF6B35) : const Color(0x2050280A),
-                              width: 1,
-                            ),
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(14),
-                              onTap: () {
-                                HapticFeedback.selectionClick();
-                                context.push('/new-chat');
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.all(9),
-                                child: Icon(
-                                  Icons.edit_square,
-                                  size: 20,
-                                  color: AppColors.primaryOrange,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    ZyloCircleAction(
+                      icon: Icons.edit_outlined,
+                      size: 40,
+                      iconSize: 18,
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        context.push('/new-chat');
+                      },
                     ),
                   ],
                 ),
               ),
 
-              // 2. Branded Search Bar
+              // 2. Editorial title
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                padding: const EdgeInsets.fromLTRB(20, 22, 20, 14),
+                child: Text('Chats', style: AppTypography.serifTitle(fontSize: 44, isDark: isDark)),
+              ),
+
+              // 3. Search
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ZyloSearchBar(
                   controller: _searchController,
                   hintText: 'Search chats or friends...',
@@ -129,9 +118,9 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                 ),
               ),
 
-              const SizedBox(height: 6),
+              const SizedBox(height: 10),
 
-              // 3. Conversation List or State
+              // 4. Conversations: one grouped panel, rows split by hairlines
               Expanded(
                 child: convState.isLoading && convState.conversations.isEmpty
                     ? const Center(child: ZyloLoadingIndicator(size: 38))
@@ -146,26 +135,51 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                             onAction: () => context.push('/new-chat'),
                           )
                         : RefreshIndicator(
-                            color: AppColors.primaryOrange,
+                            color: isDark ? AppColors.emberLight : AppColors.primaryOrange,
                             onRefresh: () async {
                               await ref.read(conversationsProvider.notifier).loadConversations();
                               await ref.read(momentsProvider.notifier).loadMoments();
                             },
-                            child: ListView.builder(
+                            child: CustomScrollView(
                               physics: const AlwaysScrollableScrollPhysics(
                                 parent: BouncingScrollPhysics(),
                               ),
-                              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                              itemCount: conversations.length,
-                              itemBuilder: (context, index) {
-                                final conv = conversations[index];
-                                return _ConversationListTile(
-                                  conv: conv,
-                                  currentUserId: currentUserId,
-                                  momentByFriendId: momentByFriendId,
-                                  isDark: isDark,
-                                );
-                              },
+                              slivers: [
+                                SliverPadding(
+                                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                                  sliver: DecoratedSliver(
+                                    decoration: BoxDecoration(
+                                      color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+                                      borderRadius: BorderRadius.circular(_panelRadius),
+                                      border: Border.all(color: border),
+                                    ),
+                                    sliver: SliverList.separated(
+                                      itemCount: conversations.length,
+                                      separatorBuilder: (context, index) => Divider(
+                                        height: 1,
+                                        thickness: 0.6,
+                                        indent: 74,
+                                        endIndent: 16,
+                                        color: border,
+                                      ),
+                                      itemBuilder: (context, index) {
+                                        return _ConversationListTile(
+                                          conv: conversations[index],
+                                          currentUserId: currentUserId,
+                                          momentByFriendId: momentByFriendId,
+                                          isDark: isDark,
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(index == 0 ? _panelRadius : 0),
+                                            bottom: Radius.circular(
+                                              index == conversations.length - 1 ? _panelRadius : 0,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
               ),
@@ -183,11 +197,15 @@ class _ConversationListTile extends ConsumerWidget {
   final Map<String, Moment> momentByFriendId;
   final bool isDark;
 
+  /// Rounded only where the row touches the panel's corners, so ripples stay inside it.
+  final BorderRadius borderRadius;
+
   const _ConversationListTile({
     required this.conv,
     required this.currentUserId,
     required this.momentByFriendId,
     required this.isDark,
+    required this.borderRadius,
   });
 
   @override
@@ -208,154 +226,127 @@ class _ConversationListTile extends ConsumerWidget {
     final lastMsg = conv.lastMessage;
     final isFromMe = lastMsg != null && lastMsg.senderId == currentUserId;
     final unreadCount = conv.unreadCount;
+    final hasUnread = unreadCount > 0;
 
     // Check if a Moment exists with this user
     final moment = otherId != null ? momentByFriendId[otherId] : null;
     final hasActiveMoment = moment != null && moment.isActive;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1B1715) : const Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: hasActiveMoment
-              ? AppColors.primaryOrange.withValues(alpha: isDark ? 0.35 : 0.28)
-              : (isDark ? AppColors.borderDark : AppColors.borderLight),
-          width: hasActiveMoment ? 1.2 : 1.0,
-        ),
-        boxShadow: [
-          if (hasActiveMoment)
-            BoxShadow(
-              color: AppColors.primaryOrange.withValues(alpha: isDark ? 0.08 : 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            )
-          else
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 6,
-          ),
-          leading: UserAvatar(
-            imageUrl: otherPhoto,
-            name: otherUserName,
-            radius: 25,
-            showOnlineStatus: true,
-            isOnline: isOnline,
-            hasGlow: hasActiveMoment,
-          ),
-          title: Row(
+    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final accent = isDark ? AppColors.emberLight : AppColors.primaryOrange;
+
+    return Material(
+      color: Colors.transparent,
+      borderRadius: borderRadius,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          context.push(
+            '/chat/${conv.id}',
+            extra: otherUser != null ? conv.copyWith(otherParticipant: otherUser) : conv,
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          child: Row(
             children: [
-              Expanded(
-                child: Text(
-                  otherUserName,
-                  style: TextStyle(
-                    fontWeight: unreadCount > 0 ? FontWeight.w800 : FontWeight.w700,
-                    fontSize: 16,
-                    letterSpacing: -0.2,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
+              UserAvatar(
+                imageUrl: otherPhoto,
+                name: otherUserName,
+                radius: 22,
+                showOnlineStatus: true,
+                isOnline: isOnline,
+                hasGlow: hasActiveMoment,
               ),
-              // Moment Indicator Badge if active
-              if (moment != null) ...[
-                const SizedBox(width: 6),
-                MomentBadge.fromMoment(moment),
-              ],
-              const SizedBox(width: 8),
-              if (lastMsg != null)
-                Text(
-                  DateFormatter.formatMessageTime(lastMsg.createdAt),
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
-                  ),
-                ),
-            ],
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Row(
-              children: [
-                if (isFromMe) ...[
-                  MessageStatusIcon(status: lastMsg.status, size: 14),
-                  const SizedBox(width: 4),
-                ],
-                Expanded(
-                  child: Text(
-                    lastMsg != null
-                        ? (lastMsg.isDeleted
-                            ? 'This message was deleted'
-                            : (lastMsg.type == MessageType.image
-                                ? '📷 Photo'
-                                : (lastMsg.type == MessageType.file
-                                    ? '📎 Attachment'
-                                    : lastMsg.content)))
-                        : 'No messages yet',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: unreadCount > 0
-                          ? (isDark ? Colors.white : AppColors.textPrimaryLight)
-                          : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
-                      fontWeight: unreadCount > 0 ? FontWeight.w600 : FontWeight.normal,
-                    ),
-                  ),
-                ),
-                if (unreadCount > 0)
-                  Container(
-                    margin: const EdgeInsets.only(left: 8),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x66FF6B35),
-                          blurRadius: 6,
-                          offset: Offset(0, 1),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            otherUserName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15.5,
+                              letterSpacing: -0.2,
+                              color: textPrimary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
+                        // Moment Indicator Badge if active
+                        if (moment != null) ...[
+                          const SizedBox(width: 6),
+                          MomentBadge.fromMoment(moment),
+                        ],
+                        const SizedBox(width: 8),
+                        if (lastMsg != null)
+                          Text(
+                            DateFormatter.formatChatListTime(lastMsg.createdAt),
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: hasUnread ? accent : textSecondary,
+                              fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w400,
+                            ),
+                          ),
                       ],
                     ),
-                    child: Text(
-                      unreadCount > 99 ? '99+' : '$unreadCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        if (isFromMe) ...[
+                          MessageStatusIcon(status: lastMsg.status, size: 14),
+                          const SizedBox(width: 4),
+                        ],
+                        Expanded(
+                          child: Text(
+                            lastMsg != null
+                                ? (lastMsg.isDeleted
+                                    ? 'This message was deleted'
+                                    : (lastMsg.type == MessageType.image
+                                        ? '📷 Photo'
+                                        : (lastMsg.type == MessageType.file
+                                            ? '📎 Attachment'
+                                            : lastMsg.content)))
+                                : 'No messages yet',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              color: hasUnread ? textPrimary : textSecondary,
+                              fontWeight: hasUnread ? FontWeight.w500 : FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        if (hasUnread)
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: accent.withValues(alpha: 0.7)),
+                            ),
+                            child: Text(
+                              unreadCount > 99 ? '99+' : '$unreadCount',
+                              style: TextStyle(
+                                color: accent,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-              ],
-            ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          onTap: () {
-            HapticFeedback.selectionClick();
-            context.push(
-              '/chat/${conv.id}',
-              extra: otherUser != null
-                  ? conv.copyWith(otherParticipant: otherUser)
-                  : conv,
-            );
-          },
         ),
       ),
     );

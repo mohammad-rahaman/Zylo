@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_shadows.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/zylo_brand.dart';
+import '../../widgets/zylo_button.dart';
+import '../../core/theme/app_typography.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -77,7 +77,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const Text(
                   'Join Zylo Today',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontFamily: AppTypography.serifFamily, fontSize: 38, height: 1.1, letterSpacing: -0.3),
                 ),
                 const SizedBox(height: 6),
                 const Text(
@@ -157,31 +157,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   },
                 ),
                 const SizedBox(height: 28),
-                Container(
-                  height: 52,
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: AppRadius.pillBorder,
-                    boxShadow: [AppShadows.buttonGlow],
-                  ),
-                  child: ElevatedButton(
-                    onPressed: isLoading ? null : _handleRegister,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillBorder),
-                    ),
-                    child: isLoading
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
-                          )
-                        : const Text(
-                            'Create Account',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
-                          ),
-                  ),
+                ZyloPrimaryButton(
+                  label: 'Create Account',
+                  isLoading: isLoading,
+                  onPressed: _handleRegister,
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -194,7 +173,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         'Log In',
                         style: TextStyle(
                           color: AppColors.primaryLight,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),

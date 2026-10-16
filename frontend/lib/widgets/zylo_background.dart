@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_radius.dart';
@@ -9,8 +10,8 @@ enum ZyloBackgroundIntensity {
   strong,
 }
 
-/// Signature ambient background for Zylo with warm cinematic lighting,
-/// soft orange ambient glow, faint abstract sparkle/orbit watermark, and depth transitions.
+/// Signature ambient background for Zylo: a quiet paper/graphite canvas with
+/// a barely-there warm wash and a fine-line orbit motif.
 class ZyloBackground extends StatelessWidget {
   final Widget? child;
   final ZyloBackgroundIntensity intensity;
@@ -31,90 +32,97 @@ class ZyloBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Intensity opacity factors
-    final double glowAlpha;
+    final double washAlpha;
     final double intensityFactor;
     switch (intensity) {
       case ZyloBackgroundIntensity.subtle:
-        glowAlpha = isDark ? 0.07 : 0.05;
+        washAlpha = isDark ? 0.05 : 0.035;
         intensityFactor = 1.0;
         break;
       case ZyloBackgroundIntensity.medium:
-        glowAlpha = isDark ? 0.12 : 0.09;
-        intensityFactor = 1.4;
+        washAlpha = isDark ? 0.07 : 0.05;
+        intensityFactor = 1.3;
         break;
       case ZyloBackgroundIntensity.strong:
-        glowAlpha = isDark ? 0.20 : 0.15;
-        intensityFactor = 1.8;
+        washAlpha = isDark ? 0.09 : 0.065;
+        intensityFactor = 1.6;
         break;
     }
 
     final baseBgColor = isDark ? AppColors.bgDark : AppColors.bgLight;
+    // A whisper of vertical light: the top of the canvas is marginally brighter.
+    final topBgColor = Color.lerp(baseBgColor, Colors.white, isDark ? 0.025 : 0.45)!;
 
     return Stack(
       fit: StackFit.expand,
       children: [
-        // 1. Base solid canvas (#121212 dark / #FFF8F3 light)
-        Container(color: baseBgColor),
+        // 1. Base canvas with a soft vertical tone shift
+        DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [topBgColor, baseBgColor],
+              stops: const [0.0, 0.6],
+            ),
+          ),
+        ),
 
-        // 2. Warm ambient top radial gradient
+        // 2. Faint warm wash, top-right
         if (showTopGlow)
           Positioned(
-            top: -120,
-            right: -60,
-            width: 380,
-            height: 380,
+            top: -160,
+            right: -120,
+            width: 420,
+            height: 420,
             child: IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFFFF6B35).withValues(alpha: glowAlpha * 1.5),
-                      const Color(0xFFFF9B71).withValues(alpha: glowAlpha * 0.8),
-                      Colors.transparent,
+                      AppColors.primaryOrange.withValues(alpha: washAlpha),
+                      AppColors.primaryOrange.withValues(alpha: 0.0),
                     ],
-                    stops: const [0.0, 0.45, 1.0],
                   ),
                 ),
               ),
             ),
           ),
 
-        // 3. Warm ambient bottom radial gradient
+        // 3. Faint warm wash, bottom-left
         if (showBottomGlow)
           Positioned(
-            bottom: -100,
-            left: -80,
-            width: 320,
-            height: 320,
+            bottom: -140,
+            left: -120,
+            width: 360,
+            height: 360,
             child: IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFFFF451A).withValues(alpha: glowAlpha),
-                      Colors.transparent,
+                      AppColors.primaryOrange.withValues(alpha: washAlpha * 0.8),
+                      AppColors.primaryOrange.withValues(alpha: 0.0),
                     ],
-                    stops: const [0.0, 1.0],
                   ),
                 ),
               ),
             ),
           ),
 
-        // 4. Subtle ambient celestial orbits & Zylo sparkle watermark (3-8% intensity)
+        // 4. Fine-line sparkle & orbit motif
         if (showAmbientCanvas)
           Positioned.fill(
             child: IgnorePointer(
-              child: CustomPaint(
-                painter: ZyloAmbientCanvasPainter(
-                  isDark: isDark,
-                  intensityFactor: intensityFactor,
+              child: RepaintBoundary(
+                child: CustomPaint(
+                  painter: ZyloAmbientCanvasPainter(
+                    isDark: isDark,
+                    intensityFactor: intensityFactor,
+                  ),
                 ),
-                isComplex: true,
-                willChange: false,
               ),
             ),
           ),
@@ -126,8 +134,8 @@ class ZyloBackground extends StatelessWidget {
   }
 }
 
-/// Custom painter that renders the signature Oversized Zylo Sparkle watermark
-/// and rich ambient peach/orange gradient mesh in the lower screen canvas.
+/// Paints the quiet brand motif in the lower-right of the canvas: two tilted
+/// hairline orbits (echoing the Orbit Z mark) with a single ember moment dot.
 class ZyloAmbientCanvasPainter extends CustomPainter {
   final bool isDark;
   final double intensityFactor;
@@ -137,204 +145,61 @@ class ZyloAmbientCanvasPainter extends CustomPainter {
     this.intensityFactor = 1.0,
   });
 
+  double _a(double base) => (base * intensityFactor).clamp(0.0, 1.0);
+
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final h = size.height;
 
-    // Center and radius of the Oversized Sparkle
-    final cx = w * 0.70;
-    final cy = h * 0.65;
-    final r = w * 0.30; // ~235px full span
+    final center = Offset(w * 0.80, h * 0.72);
+    final r = w * 0.30;
 
-    // ==========================================
-    // 1. ORGANIC AMBIENT GRADIENT MESH
-    // ==========================================
-
-    // Layer A: Broad warm ambient wash across lower-half (organic elliptical gradient)
-    final broadCenter = Offset(w * 0.72, h * 0.68);
-    final broadRect = Rect.fromCenter(
-      center: broadCenter,
-      width: w * 1.5,
-      height: h * 0.85,
-    );
-    final broadMeshPaint = Paint()
-      ..shader = RadialGradient(
-        colors: isDark
-            ? [
-                const Color(0x38FF6B35), // ~22% warm orange
-                const Color(0x22FF451A), // ~13% deep amber
-                const Color(0x0CFF8A50), // ~5% soft peach
-                Colors.transparent,
-              ]
-            : [
-                const Color(0x32FFA873), // ~20% warm peach
-                const Color(0x1EFF7A3D), // ~12% soft coral
-                const Color(0x0AFFD4BD), // ~4% light cream-peach
-                Colors.transparent,
-              ],
-        stops: const [0.0, 0.38, 0.72, 1.0],
-      ).createShader(broadRect);
-    canvas.drawOval(broadRect, broadMeshPaint);
-
-    // Layer B: Concentrated warm peach/orange glow directly around the sparkle
-    final focalRect = Rect.fromCircle(center: Offset(cx, cy), radius: r * 1.6);
-    final focalMeshPaint = Paint()
-      ..shader = RadialGradient(
-        colors: isDark
-            ? [
-                const Color(0x48FF6B35), // ~28% radiant orange
-                const Color(0x1EFF451A), // ~12% deep ember
-                Colors.transparent,
-              ]
-            : [
-                const Color(0x3CFFA066), // ~24% radiant peach-orange
-                const Color(0x16FF7E40), // ~9% soft apricot
-                Colors.transparent,
-              ],
-        stops: const [0.0, 0.55, 1.0],
-      ).createShader(focalRect);
-    canvas.drawCircle(Offset(cx, cy), r * 1.6, focalMeshPaint);
-
-    // Layer C: Soft bottom-right corner ambient fill (smooth corner wash)
-    final cornerRect = Rect.fromLTWH(w * 0.20, h * 0.45, w * 0.90, h * 0.60);
-    final cornerMeshPaint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(0.85, 0.75),
-        radius: 0.90,
-        colors: isDark
-            ? [
-                const Color(0x28FF5722),
-                const Color(0x14FF7A3D),
-                Colors.transparent,
-              ]
-            : [
-                const Color(0x24FFB288),
-                const Color(0x0EFF8A50),
-                Colors.transparent,
-              ],
-        stops: const [0.0, 0.50, 1.0],
-      ).createShader(cornerRect);
-    canvas.drawRect(cornerRect, cornerMeshPaint);
-
-    // ==========================================
-    // 2. OVERSIZED ZYLO SPARKLE WATERMARK
-    // ==========================================
-
-    // Subtle soft glow blur directly hugging the sparkle silhouette
-    final glowPath = _createSparklePath(cx, cy, r * 1.08, pinch: 0.24);
-    final auraPaint = Paint()
-      ..color = (isDark ? const Color(0x35FF6B35) : const Color(0x28FF7A3D))
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22.0);
-    canvas.drawPath(glowPath, auraPaint);
-
-    // A. Main Oversized Sparkle - Translucent Solid Gradient Fill
-    final sparkleFillPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.bottomLeft,
-        end: Alignment.topRight,
-        colors: isDark
-            ? [
-                const Color(0x38FF350D), // ~22% deep orange
-                const Color(0x2EFF6B35), // ~18% signature orange
-                const Color(0x22FFA656), // ~13% warm golden highlight
-              ]
-            : [
-                const Color(0x28FF451A), // ~16% vibrant base
-                const Color(0x20FF6B35), // ~12% signature orange
-                const Color(0x18FFAA70), // ~9% golden peach tip
-              ],
-        stops: const [0.0, 0.52, 1.0],
-      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r))
-      ..style = PaintingStyle.fill;
-
-    final mainSparklePath = _createSparklePath(cx, cy, r, pinch: 0.24);
-    canvas.drawPath(mainSparklePath, sparkleFillPaint);
-
-    // B. Subtle Sparkle Perimeter Contour (soft outer definition)
-    final sparkleStrokePaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4
-      ..shader = LinearGradient(
-        begin: Alignment.bottomLeft,
-        end: Alignment.topRight,
-        colors: isDark
-            ? [
-                const Color(0x45FF5722),
-                const Color(0x55FF7A3D),
-                const Color(0x35FFA656),
-              ]
-            : [
-                const Color(0x35FF6B35),
-                const Color(0x40FFA066),
-                const Color(0x25FFC299),
-              ],
-        stops: const [0.0, 0.50, 1.0],
-      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r));
-    canvas.drawPath(mainSparklePath, sparkleStrokePaint);
-
-    // C. Optical Center Specular Highlight (warm subtle lens core)
-    final specularPaint = Paint()
+    // 1. Soft warm pool that anchors the motif
+    final poolRadius = r * 2.2;
+    final poolPaint = Paint()
       ..shader = RadialGradient(
         colors: [
-          (isDark ? Colors.white : const Color(0xFFFFF0E6)).withValues(alpha: isDark ? 0.35 : 0.25),
-          Colors.transparent,
+          AppColors.primaryOrange.withValues(alpha: _a(isDark ? 0.045 : 0.03)),
+          AppColors.primaryOrange.withValues(alpha: 0.0),
         ],
-        stops: const [0.0, 1.0],
-      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r * 0.32))
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(cx, cy), r * 0.32, specularPaint);
+      ).createShader(Rect.fromCircle(center: center, radius: poolRadius));
+    canvas.drawCircle(center, poolRadius, poolPaint);
 
-    // D. Companion Secondary Sparkle (anchored to upper-right)
-    final secCx = cx + r * 0.70;
-    final secCy = cy - r * 0.56;
-    final secR = r * 0.34;
+    // 2. Tilted hairline orbits that echo the Orbit Z mark
+    const tilt = -24 * math.pi / 180;
+    final ink = isDark ? Colors.white : AppColors.textPrimaryLight;
+    final accent = isDark ? AppColors.emberLight : AppColors.primaryOrange;
 
-    final secSparklePath = _createSparklePath(secCx, secCy, secR, pinch: 0.24);
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(tilt);
 
-    final secFillPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.bottomLeft,
-        end: Alignment.topRight,
-        colors: isDark
-            ? [
-                const Color(0x30FF451A),
-                const Color(0x28FF6B35),
-                const Color(0x1EFFA656),
-              ]
-            : [
-                const Color(0x22FF5722),
-                const Color(0x1CFF6B35),
-                const Color(0x14FFAA70),
-              ],
-        stops: const [0.0, 0.52, 1.0],
-      ).createShader(Rect.fromCircle(center: Offset(secCx, secCy), radius: secR))
-      ..style = PaintingStyle.fill;
-    canvas.drawPath(secSparklePath, secFillPaint);
+    final outerOrbit = Rect.fromCenter(center: Offset.zero, width: r * 4.4, height: r * 1.6);
+    final innerOrbit = Rect.fromCenter(center: Offset.zero, width: r * 3.0, height: r * 1.1);
+    canvas.drawOval(
+      outerOrbit,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8
+        ..color = ink.withValues(alpha: _a(isDark ? 0.06 : 0.07)),
+    );
+    canvas.drawOval(
+      innerOrbit,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.1
+        ..color = accent.withValues(alpha: _a(isDark ? 0.22 : 0.16)),
+    );
 
-    final secStrokePaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0
-      ..color = (isDark ? const Color(0x45FF7A3D) : const Color(0x30FF6B35));
-    canvas.drawPath(secSparklePath, secStrokePaint);
-  }
-
-  Path _createSparklePath(double cx, double cy, double radius, {double pinch = 0.24}) {
-    final path = Path();
-    final p = radius * pinch;
-
-    final top = Offset(cx, cy - radius);
-    final right = Offset(cx + radius, cy);
-    final bottom = Offset(cx, cy + radius);
-    final left = Offset(cx - radius, cy);
-
-    path.moveTo(top.dx, top.dy);
-    path.cubicTo(cx, cy - p, cx + p, cy, right.dx, right.dy);
-    path.cubicTo(cx + p, cy, cx, cy + p, bottom.dx, bottom.dy);
-    path.cubicTo(cx, cy + p, cx - p, cy, left.dx, left.dy);
-    path.cubicTo(cx - p, cy, cx, cy - p, top.dx, top.dy);
-    path.close();
-    return path;
+    // 3. The moment dot riding the inner orbit
+    const phase = -2.2;
+    final dot = Offset(
+      innerOrbit.width / 2 * math.cos(phase),
+      innerOrbit.height / 2 * math.sin(phase),
+    );
+    canvas.drawCircle(dot, 2.6, Paint()..color = accent.withValues(alpha: _a(isDark ? 0.6 : 0.5)));
+    canvas.restore();
   }
 
   @override
@@ -343,9 +208,7 @@ class ZyloAmbientCanvasPainter extends CustomPainter {
   }
 }
 
-
-
-/// Standard Zylo Glass / Elevated Surface
+/// Standard Zylo elevated surface: clean card, hairline border, soft lift.
 class ZyloSurface extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;

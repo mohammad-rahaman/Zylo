@@ -93,8 +93,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          AppColors.primaryOrange.withValues(alpha: 0.5),
-                          AppColors.primaryGradientStart.withValues(alpha: 0.2),
+                          AppColors.primaryOrange.withValues(alpha: 0.22),
+                          AppColors.primaryGradientStart.withValues(alpha: 0.08),
                           Colors.transparent,
                         ],
                         stops: const [0.0, 0.45, 1.0],
@@ -117,9 +117,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   children: [
                     // Zylo Signature Sparkle Symbol
                     const ZyloSymbol(
-                      size: 92,
+                      size: 112,
                       variant: ZyloSymbolVariant.orangeGradient,
                       hasGlow: true,
+                      isDark: true, // splash is always graphite
                     ),
                     const SizedBox(height: 24),
 
@@ -128,6 +129,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       size: 42,
                       isDark: true,
                       hasGlow: false,
+                      showMark: false, // the large mark is right above
                     ),
                     const SizedBox(height: 12),
 
@@ -135,9 +137,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     Text(
                       'SHARE YOUR MOMENT.',
                       style: AppTypography.tagline(
-                        fontSize: 12,
-                        color: const Color(0xFFFFA066),
-                        letterSpacing: 4.2,
+                        fontSize: 11,
+                        color: AppColors.textSecondaryDark,
+                        letterSpacing: 3.6,
                       ),
                     ),
                   ],
@@ -172,12 +174,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(2),
                           gradient: AppColors.primaryGradient,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x80FF6B35),
-                              blurRadius: 8,
-                            ),
-                          ],
                         ),
                       ),
                     ),
@@ -185,11 +181,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   const SizedBox(height: 18),
                   Text(
                     'Good moments, better connections.',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
+                    style: const TextStyle(
                       fontSize: 13,
-                      color: AppColors.primaryOrange.withValues(alpha: 0.8),
-                      letterSpacing: 0.3,
+                      color: AppColors.textSecondaryDark,
+                      letterSpacing: 0.2,
                     ),
                   ),
                 ],
