@@ -226,16 +226,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const userId = client.data.userId;
     if (!userId || !data.messageId) return;
 
-    await this.messagesService.updateMessageStatus(data.messageId, userId, {
-      status: MessageStatus.DELIVERED,
-    });
+    try {
+      await this.messagesService.updateMessageStatus(data.messageId, userId, {
+        status: MessageStatus.DELIVERED,
+      });
 
-    this.server.to(`conversation:${data.conversationId}`).emit('message:status_updated', {
-      messageId: data.messageId,
-      conversationId: data.conversationId,
-      status: MessageStatus.DELIVERED,
-      userId,
-    });
+      this.server.to(`conversation:${data.conversationId}`).emit('message:status_updated', {
+        messageId: data.messageId,
+        conversationId: data.conversationId,
+        status: MessageStatus.DELIVERED,
+        userId,
+      });
+    } catch (err: any) {
+      this.logger.warn(`Failed to process message:delivered for ${data.messageId}: ${err.message}`);
+    }
   }
 
   // Realtime Read Receipt
@@ -247,19 +251,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const userId = client.data.userId;
     if (!userId || !data.messageId) return;
 
-    await this.messagesService.updateMessageStatus(data.messageId, userId, {
-      status: MessageStatus.READ,
-    });
+    try {
+      await this.messagesService.updateMessageStatus(data.messageId, userId, {
+        status: MessageStatus.READ,
+      });
 
-    await this.conversationsService.resetUnread(data.conversationId, userId);
+      await this.conversationsService.resetUnread(data.conversationId, userId);
 
-    this.server.to(`conversation:${data.conversationId}`).emit('message:status_updated', {
-      messageId: data.messageId,
-      conversationId: data.conversationId,
-      status: MessageStatus.READ,
-      userId,
-      readAt: new Date(),
-    });
+      this.server.to(`conversation:${data.conversationId}`).emit('message:status_updated', {
+        messageId: data.messageId,
+        conversationId: data.conversationId,
+        status: MessageStatus.READ,
+        userId,
+        readAt: new Date(),
+      });
+    } catch (err: any) {
+      this.logger.warn(`Failed to process message:read for ${data.messageId}: ${err.message}`);
+    }
   }
 
   // Typing Start
@@ -271,14 +279,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const userId = client.data.userId;
     if (!userId || !data.conversationId) return;
 
-    await this.redisService.setTyping(data.conversationId, userId);
+    try {
+      await this.redisService.setTyping(data.conversationId, userId);
 
-    // Broadcast typing indicator to others in conversation
-    client.to(`conversation:${data.conversationId}`).emit('typing:started', {
-      conversationId: data.conversationId,
-      userId,
-      username: client.data.user?.username,
-    });
+      // Broadcast typing indicator to others in conversation
+      client.to(`conversation:${data.conversationId}`).emit('typing:started', {
+        conversationId: data.conversationId,
+        userId,
+        username: client.data.user?.username,
+      });
+    } catch (err: any) {
+      this.logger.warn(`Failed to process typing:start: ${err.message}`);
+    }
   }
 
   // Typing Stop
@@ -290,12 +302,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const userId = client.data.userId;
     if (!userId || !data.conversationId) return;
 
-    await this.redisService.clearTyping(data.conversationId, userId);
+    try {
+      await this.redisService.clearTyping(data.conversationId, userId);
 
-    client.to(`conversation:${data.conversationId}`).emit('typing:stopped', {
-      conversationId: data.conversationId,
-      userId,
-    });
+      client.to(`conversation:${data.conversationId}`).emit('typing:stopped', {
+        conversationId: data.conversationId,
+        userId,
+      });
+    } catch (err: any) {
+      this.logger.warn(`Failed to process typing:stop: ${err.message}`);
+    }
   }
 
   // Message Deletion Broadcast
@@ -307,11 +323,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const userId = client.data.userId;
     if (!userId || !data.messageId) return;
 
-    await this.messagesService.deleteMessage(data.messageId, userId);
+    try {
+      await this.messagesService.deleteMessage(data.messageId, userId);
 
-    this.server.to(`conversation:${data.conversationId}`).emit('message:deleted', {
-      messageId: data.messageId,
-      conversationId: data.conversationId,
-    });
+      this.server.to(`conversation:${data.conversationId}`).emit('message:deleted', {
+        messageId: data.messageId,
+        conversationId: data.conversationId,
+      });
+    } catch (err: any) {
+      this.logger.warn(`Failed to process message:delete for ${data.messageId}: ${err.message}`);
+    }
   }
 }

@@ -13,11 +13,14 @@
 
 > A modern, production-grade cross-platform real-time messaging application built with **Flutter (Material 3 & Riverpod)**, **NestJS**, **MongoDB Atlas**, **Redis**, and **Socket.IO**.
 
+📖 **[Read the Senior Engineering Portfolio & Resume Guide](PORTFOLIO_RESUME_GUIDE.md)** for interview talking points, resume bullet points, and deep-dive architecture answers.
+
 ---
 
 ## 📑 Table of Contents
 
 - [Overview](#overview)
+- [Portfolio & Interview Guide](PORTFOLIO_RESUME_GUIDE.md)
 - [Architecture & Tech Stack](#architecture--tech-stack)
 - [Database Design & Indexing](#database-design--indexing)
 - [Real-Time Protocol (Socket.IO)](#real-time-protocol-socketio)
@@ -304,10 +307,10 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=
 
-# JWT Secrets
-JWT_ACCESS_SECRET=zylo_super_secret_jwt_access_key_change_in_production_12345
+# JWT Secrets (generate strong 32+ character secrets in production)
+JWT_ACCESS_SECRET=your_jwt_access_secret_min_32_characters
 JWT_ACCESS_EXPIRATION=15m
-JWT_REFRESH_SECRET=zylo_super_secret_jwt_refresh_key_change_in_production_67890
+JWT_REFRESH_SECRET=your_jwt_refresh_secret_min_32_characters
 JWT_REFRESH_EXPIRATION=7d
 
 # File Uploads (local or cloudinary)

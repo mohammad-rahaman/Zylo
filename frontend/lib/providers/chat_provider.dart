@@ -240,7 +240,10 @@ class MessagesNotifier extends StateNotifier<MessagesState> {
         if (tempIdx != -1) {
           list[tempIdx] = msg;
         } else {
-          list.insert(0, msg);
+          final exists = list.any((m) => m.id == msg.id);
+          if (!exists) {
+            list.insert(0, msg);
+          }
         }
 
         state = state.copyWith(messages: list);

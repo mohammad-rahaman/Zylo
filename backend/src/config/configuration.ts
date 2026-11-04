@@ -19,7 +19,7 @@ function resolveSecret(name: string, devFallback: string): string {
 }
 
 export default () => ({
-  port: parseInt(process.env.PORT, 10) || 3000,
+  port: parseInt(process.env.PORT || '3000', 10),
   apiPrefix: process.env.API_PREFIX || 'api/v1',
   corsOrigin: process.env.CORS_ORIGIN || '*',
   database: {
@@ -27,7 +27,7 @@ export default () => ({
   },
   redis: {
     host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+    port: parseInt(process.env.REDIS_PORT || '6379', 10),
     password: process.env.REDIS_PASSWORD || undefined,
   },
   jwt: {
@@ -39,7 +39,7 @@ export default () => ({
   uploads: {
     driver: process.env.UPLOAD_DRIVER || 'local',
     destination: process.env.UPLOAD_DESTINATION || './uploads',
-    maxSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES, 10) || 25 * 1024 * 1024,
+    maxSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES || `${25 * 1024 * 1024}`, 10),
     cloudinary: {
       cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
       apiKey: process.env.CLOUDINARY_API_KEY || '',

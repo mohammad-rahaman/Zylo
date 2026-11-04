@@ -197,7 +197,7 @@ describe('MomentsService Unit Tests', () => {
         }),
         { new: true },
       );
-      expect(result.currentCount).toBe(4);
+      expect(result?.currentCount).toBe(4);
     });
 
     it('Multiple interactions from both participants do NOT repeatedly increment or extend timer', async () => {

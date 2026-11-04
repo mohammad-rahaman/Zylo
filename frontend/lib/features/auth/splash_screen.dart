@@ -179,9 +179,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     ),
                   ),
                   const SizedBox(height: 18),
-                  Text(
+                  const Text(
                     'Good moments, better connections.',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondaryDark,
                       letterSpacing: 0.2,

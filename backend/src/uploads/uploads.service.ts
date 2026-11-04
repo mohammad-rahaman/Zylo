@@ -94,8 +94,8 @@ export class UploadsService {
           resource_type: resourceType,
         },
         (error, result) => {
-          if (error) {
-            this.logger.error(`Cloudinary upload failed: ${error.message}`);
+          if (error || !result) {
+            this.logger.error(`Cloudinary upload failed: ${error?.message || 'Empty response'}`);
             return reject(new BadRequestException('Failed to upload file to Cloudinary'));
           }
           resolve({

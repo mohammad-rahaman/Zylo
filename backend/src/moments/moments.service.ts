@@ -223,7 +223,7 @@ export class MomentsService {
       throw new BadRequestException('No valid recipients provided');
     }
 
-    const results = [];
+    const results: any[] = [];
 
     for (const recipientId of uniqueRecipients) {
       if (!Types.ObjectId.isValid(recipientId)) {
@@ -307,7 +307,7 @@ export class MomentsService {
       .populate('participants', 'username displayName profilePhoto isOnline lastSeen')
       .exec();
 
-    const activeList = [];
+    const activeList: any[] = [];
 
     for (const moment of moments) {
       if (now.getTime() >= moment.expiresAt.getTime()) {
@@ -554,7 +554,7 @@ export class MomentsService {
       new Date(myLastInteraction).getTime() >= new Date(windowStart).getTime();
 
     // Find the other participant
-    let friendUser = null;
+    let friendUser: any = null;
     if (moment.participants && moment.participants.length > 0) {
       friendUser = moment.participants.find(
         (p: any) => p._id && p._id.toString() !== currentUserId,

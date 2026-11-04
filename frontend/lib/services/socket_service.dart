@@ -24,7 +24,12 @@ class SocketService {
   bool get isConnected => _socket?.connected ?? false;
 
   void connect(String accessToken) {
-    if (_socket != null && _socket!.connected) return;
+    if (_socket != null) {
+      if (_socket!.connected) return;
+      _socket!.disconnect();
+      _socket!.dispose();
+      _socket = null;
+    }
 
     _socket = io.io(
       ApiConstants.socketUrl,

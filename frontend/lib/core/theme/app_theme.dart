@@ -104,13 +104,13 @@ class AppTheme {
           borderRadius: AppRadius.mdBorder,
           borderSide: BorderSide(color: textPrimary.withValues(alpha: 0.55), width: 1.2),
         ),
-        errorBorder: OutlineInputBorder(
+        errorBorder: const OutlineInputBorder(
           borderRadius: AppRadius.mdBorder,
-          borderSide: const BorderSide(color: AppColors.errorRed),
+          borderSide: BorderSide(color: AppColors.errorRed),
         ),
-        focusedErrorBorder: OutlineInputBorder(
+        focusedErrorBorder: const OutlineInputBorder(
           borderRadius: AppRadius.mdBorder,
-          borderSide: const BorderSide(color: AppColors.errorRed, width: 1.2),
+          borderSide: BorderSide(color: AppColors.errorRed, width: 1.2),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
         hintStyle: TextStyle(color: textSecondary, fontSize: 15),

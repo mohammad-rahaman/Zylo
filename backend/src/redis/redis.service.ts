@@ -6,7 +6,6 @@ import Redis from 'ioredis';
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RedisService.name);
   private client: Redis;
-  private subscriber: Redis;
   private isConnected = false;
 
   constructor(private configService: ConfigService) {}
@@ -22,7 +21,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       password: password || undefined,
       retryStrategy: (times: number) => {
         if (times > 5) {
-          this.logger.warn('Redis reconnection failed after 5 attempts. Falling back to in-memory presence.');
+          this.logger.warn('Redis reconnection failed after 5 attempts. Operating in fallback mode.');
           return null; // stop retrying
         }
         return Math.min(times * 500, 2000);
@@ -31,22 +30,29 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     };
 
     this.client = new Redis(redisOptions);
-    this.subscriber = new Redis(redisOptions);
 
-    this.client.connect().then(() => {
+    this.client.on('connect', () => {
       this.isConnected = true;
       this.logger.log(`Successfully connected to Redis at ${host}:${port}`);
-    }).catch(err => {
-      this.logger.warn(`Redis connection failed: ${err.message}. Operating in fallback mode.`);
+    });
+
+    this.client.on('error', (err) => {
+      this.isConnected = false;
+      this.logger.warn(`Redis connection error: ${err.message}`);
+    });
+
+    this.client.on('close', () => {
+      this.isConnected = false;
+    });
+
+    this.client.connect().catch(err => {
+      this.logger.warn(`Redis initial connection failed: ${err.message}. Operating in fallback mode.`);
     });
   }
 
   async onModuleDestroy() {
     if (this.client) {
       await this.client.quit().catch(() => {});
-    }
-    if (this.subscriber) {
-      await this.subscriber.quit().catch(() => {});
     }
   }
 

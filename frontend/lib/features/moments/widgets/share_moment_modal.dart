@@ -242,10 +242,10 @@ class _ShareMomentModalState extends ConsumerState<ShareMomentModal> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         children: [
-                          const Text('✨', style: TextStyle(fontSize: 14)),
-                          const SizedBox(width: 5),
+                          Text('✨', style: TextStyle(fontSize: 14)),
+                          SizedBox(width: 5),
                           Text(
                             'SHARE A MOMENT',
                             style: TextStyle(

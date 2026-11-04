@@ -14,11 +14,22 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package*.json ./
-RUN npm ci --only=production
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001 -G nodejs
 
-COPY --from=builder /app/dist ./dist
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
+
+# Create uploads directory with appropriate permissions
+RUN mkdir -p /app/uploads && chown -R nestjs:nodejs /app/uploads
+
+USER nestjs
 
 EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {if (r.statusCode !== 200) process.exit(1)})"
 
 CMD ["node", "dist/main"]

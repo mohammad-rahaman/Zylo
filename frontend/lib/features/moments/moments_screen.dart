@@ -311,10 +311,10 @@ class MomentsScreen extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
+                const Row(
                   children: [
-                    const Text('✨', style: TextStyle(fontSize: 14)),
-                    const SizedBox(width: 6),
+                    Text('✨', style: TextStyle(fontSize: 14)),
+                    SizedBox(width: 6),
                     Text(
                       'YOUR MOMENT',
                       style: TextStyle(

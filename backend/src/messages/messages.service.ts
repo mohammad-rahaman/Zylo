@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ForbiddenException,
   BadRequestException,
+  InternalServerErrorException,
   Inject,
   forwardRef,
 } from '@nestjs/common';
@@ -102,9 +103,13 @@ export class MessagesService {
       .lean()
       .exec();
 
+    if (!populated) {
+      throw new InternalServerErrorException('Failed to retrieve created message');
+    }
+
     return {
       ...populated,
-      id: populated._id.toString(),
+      id: (populated as any)._id.toString(),
     };
   }
 
@@ -228,6 +233,7 @@ export class MessagesService {
     message.isDeleted = true;
     message.content = 'This message was deleted';
     message.mediaUrl = '';
+    message.mediaMetadata = undefined;
     await message.save();
 
     return {

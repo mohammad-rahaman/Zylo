@@ -31,6 +31,7 @@ frontend/.packages
 frontend/.pub-cache/
 frontend/.pub/
 frontend/build/
+frontend/coverage/
 frontend/ios/Pods/
 frontend/ios/.symlinks/
 frontend/ios/Flutter/Flutter.framework
@@ -68,6 +69,7 @@ temp/
 
 # IDEs & Developer Tools
 .claude/
+.gemini/
 .idea/
 *.iml
 .vscode/
