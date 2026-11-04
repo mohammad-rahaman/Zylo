@@ -13,26 +13,31 @@
 
 > A modern, production-grade cross-platform real-time messaging application built with **Flutter (Material 3 & Riverpod)**, **NestJS**, **MongoDB Atlas**, **Redis**, and **Socket.IO**.
 
-📖 **[Read the Senior Engineering Portfolio & Resume Guide](PORTFOLIO_RESUME_GUIDE.md)** for interview talking points, resume bullet points, and deep-dive architecture answers.
+🌐 **Live Cloud Backend:** [https://zylo-backend-8grn.onrender.com](https://zylo-backend-8grn.onrender.com)  
+📑 **Interactive OpenAPI / Swagger Docs:** [https://zylo-backend-8grn.onrender.com/api/docs](https://zylo-backend-8grn.onrender.com/api/docs)  
+🩺 **API Health Status:** [https://zylo-backend-8grn.onrender.com/health](https://zylo-backend-8grn.onrender.com/health)  
+🔑 **Pre-Seeded Demo Account:** `alex` (or `alex@zylo.com`) / `password123`  
+📖 **[Read the Senior Engineering Portfolio & Resume Guide](PORTFOLIO_RESUME_GUIDE.md)** for interview talking points, resume bullets, and architecture deep dives.
 
 ---
 
 ## 📑 Table of Contents
 
 - [Overview](#overview)
+- [Live Cloud Deployment & Demo Accounts](#-live-cloud-deployment--demo-accounts)
 - [Portfolio & Interview Guide](PORTFOLIO_RESUME_GUIDE.md)
 - [Architecture & Tech Stack](#architecture--tech-stack)
 - [Database Design & Indexing](#database-design--indexing)
 - [Real-Time Protocol (Socket.IO)](#real-time-protocol-socketio)
-- [REST API Specification](#rest-api-specification)
-- [Project Directory Structure](#project-directory-structure)
-- [Environment Configuration](#environment-configuration)
-- [Getting Started](#getting-started)
+- [REST API Specification](#-rest-api-specification)
+- [Project Directory Structure](#-project-directory-structure)
+- [Environment Configuration](#-environment-configuration)
+- [Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
   - [Option A: Running with Docker Compose (Recommended)](#option-a-running-with-docker-compose-recommended)
   - [Option B: Running Locally for Development](#option-b-running-locally-for-development)
-- [Testing](#testing)
-- [Production & Security Best Practices](#production--security-best-practices)
+- [Testing](#-testing)
+- [Production & Security Best Practices](#-production--security-best-practices)
 
 ---
 
@@ -43,9 +48,37 @@ Zylo is an end-to-end, production-ready messaging platform designed for real-tim
 - **Authentication & Security:** JWT Access & Refresh token rotation with bcrypt password hashing, automatic token re-issuance via Dio interceptors on Flutter, and HTTP-only cookie support.
 - **Real-Time Communication:** Bi-directional Socket.IO gateways with JWT handshake verification, personal user rooms, and real-time delivery (`sent` ➔ `delivered` ➔ `read`).
 - **Presence & Ephemeral State:** Redis-backed presence tracking (`online`/`offline` with `lastSeen` timestamps) and auto-expiring ephemeral typing indicators.
+- **Moments (24h Interaction Windows):** Daily interaction streaks with rolling expiry windows and interactive photo/camera quick-sharing.
 - **Media Management:** Multi-part file uploads (images, audio, video, documents) with local storage fallback and Cloudinary CDN support.
 - **Push Notifications:** Firebase Cloud Messaging (FCM) device token registration and background push dispatch for offline participants.
 - **Clean Architecture:** Domain-driven modular patterns in both backend (NestJS modules, services, controllers, gateways) and frontend (Riverpod state providers, repositories, services, and Material 3 design system).
+
+---
+
+## ☁️ Live Cloud Deployment & Demo Accounts
+
+Zylo is live and deployed on cloud infrastructure:
+
+- **Live API Base URL:** [`https://zylo-backend-8grn.onrender.com`](https://zylo-backend-8grn.onrender.com)
+- **Interactive Swagger / OpenAPI Docs:** [`https://zylo-backend-8grn.onrender.com/api/docs`](https://zylo-backend-8grn.onrender.com/api/docs)
+- **Health Check Endpoint:** [`https://zylo-backend-8grn.onrender.com/health`](https://zylo-backend-8grn.onrender.com/health)
+
+### Verified Test Accounts
+
+You can test authentication or log in immediately using any of the following pre-seeded credentials:
+
+| Login (Username or Email) | Password | User Name | Role / Bio |
+| :--- | :--- | :--- | :--- |
+| `alex` / `alex@zylo.com` | `password123` | **Alex Rivers** | Design engineer & photography enthusiast 📸 |
+| `sarah` / `sarah@zylo.com` | `password123` | **Sarah Chen** | Mobile engineer building crisp UIs ✨ |
+| `marcus` / `marcus@zylo.com` | `password123` | **Marcus Vance** | Backend architect & coffee lover ☕ |
+
+Quick cURL test:
+```bash
+curl -X POST https://zylo-backend-8grn.onrender.com/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"login":"alex","password":"password123"}'
+```
 
 ---
 
@@ -186,46 +219,50 @@ The backend exposes a Socket.IO namespace authenticated via JWT in the connectio
 
 ## 🔌 REST API Specification
 
-Interactive OpenAPI / Swagger documentation is available at **`http://localhost:3000/api/docs`**.
+Interactive OpenAPI / Swagger documentation is available at:
+- **Cloud Live:** [`https://zylo-backend-8grn.onrender.com/api/docs`](https://zylo-backend-8grn.onrender.com/api/docs)
+- **Local Dev:** `http://localhost:3000/api/docs`
 
-### 1. Authentication (`/api/auth`)
-- `POST /api/auth/register` — Register a new account (`name`, `email`, `password`, `phone?`).
-- `POST /api/auth/login` — Authenticate credentials, returns `accessToken`, `refreshToken`, and `user`.
-- `POST /api/auth/refresh` — Rotate refresh token and issue new access token.
-- `POST /api/auth/logout` — Revoke active refresh token.
+Global API Prefix: **`/api/v1`** (Health check endpoint at root `/health`).
 
-### 2. Users (`/api/users`)
-- `GET /api/users/me` — Retrieve currently logged-in user profile.
-- `PATCH /api/users/me` — Update display name, bio, and avatar.
-- `GET /api/users/search?q={query}` — Search users by name or email with live presence state.
-- `GET /api/users/:id` — Get detailed user profile by ID.
-- `POST /api/users/:id/block` — Block a user.
-- `DELETE /api/users/:id/block` — Unblock a user.
+### 1. Authentication (`/api/v1/auth`)
+- `POST /api/v1/auth/register` — Register a new account (`username`, `displayName`, `email`, `password`, `bio?`).
+- `POST /api/v1/auth/login` — Authenticate credentials (`login`: username/email, `password`). Returns `accessToken`, `refreshToken`, and user payload.
+- `POST /api/v1/auth/refresh` — Rotate refresh token and issue a new access token.
+- `POST /api/v1/auth/logout` — Revoke active refresh token session.
 
-### 3. Conversations (`/api/conversations`)
-- `GET /api/conversations` — Fetch user's active conversations sorted by recent activity with unread badges.
-- `POST /api/conversations` — Create or retrieve existing 1-on-1 direct conversation.
-- `GET /api/conversations/:id` — Get conversation metadata and participant details.
-- `DELETE /api/conversations/:id` — Delete / leave conversation.
+### 2. Users (`/api/v1/users`)
+- `GET /api/v1/users/me` — Retrieve currently authenticated user profile.
+- `PATCH /api/v1/users/me` — Update display name, bio, and avatar.
+- `GET /api/v1/users/search?q={query}` — Search users by name or email with live Redis presence state.
+- `GET /api/v1/users/:id` — Get detailed user profile by ID.
+- `POST /api/v1/users/:id/block` — Block a target user.
+- `DELETE /api/v1/users/:id/block` — Unblock a target user.
 
-### 4. Messages (`/api/messages`)
-- `GET /api/messages/:conversationId?cursor={id}&limit=30` — Paginated message history using cursor-based pagination.
-- `POST /api/messages` — Send message over REST (alternative to WebSocket).
-- `PATCH /api/messages/:id/status` — Update message status (`delivered` or `read`).
-- `DELETE /api/messages/:id` — Soft-delete message.
+### 3. Conversations (`/api/v1/conversations`)
+- `GET /api/v1/conversations` — Fetch user's active conversations sorted by recent activity with unread message badges.
+- `POST /api/v1/conversations` — Idempotently create or retrieve existing 1-on-1 direct conversation.
+- `GET /api/v1/conversations/:id` — Get conversation metadata and participant details.
+- `DELETE /api/v1/conversations/:id` — Leave / remove conversation.
 
-### 5. Media Uploads (`/api/uploads`)
-- `POST /api/uploads` — Multi-part form upload (`file`). Supports images, video, audio, and documents. Returns CDN URL, storage driver, and file metadata.
+### 4. Messages (`/api/v1/messages`)
+- `GET /api/v1/messages/:conversationId?cursor={id}&limit=30` — Paginated message history using high-performance cursor pagination.
+- `POST /api/v1/messages` — Send message over REST (alternative to WebSocket).
+- `PATCH /api/v1/messages/:id/status` — Update message status (`delivered` or `read`).
+- `DELETE /api/v1/messages/:id` — Soft-delete message.
 
-### 6. Notifications (`/api/notifications`)
-- `POST /api/notifications/device-token` — Register FCM device token for background push notifications.
-- `DELETE /api/notifications/device-token` — Unregister device token upon sign-out.
+### 5. Media Uploads (`/api/v1/uploads`)
+- `POST /api/v1/uploads` — Multi-part form upload (`file`). Supports images, video, audio, and documents. Returns CDN URL, storage driver, and file metadata.
 
-### 7. Moments (`/api/moments`)
-- `POST /api/moments` — Start a Moment with a user (`targetUserId`). Returns existing active Moment or starts a new one at count 0.
-- `GET /api/moments` — List active Moments with friends, days together, and rolling expiration timer.
-- `GET /api/moments/with/:targetUserId` — Fetch active Moment status with a specific friend.
-- `DELETE /api/moments/:id` — End / remove an active Moment.
+### 6. Notifications (`/api/v1/notifications`)
+- `POST /api/v1/notifications/device-token` — Register FCM device token for background push notifications.
+- `DELETE /api/v1/notifications/device-token` — Unregister device token upon sign-out.
+
+### 7. Moments (`/api/v1/moments`)
+- `POST /api/v1/moments` — Start or retrieve active Moment streak with a target user.
+- `GET /api/v1/moments` — List active Moments with friends, streak counters, and rolling expiration timer.
+- `GET /api/v1/moments/with/:targetUserId` — Fetch active Moment status with a specific friend.
+- `DELETE /api/v1/moments/:id` — End / remove an active Moment streak.
 
 ---
 
