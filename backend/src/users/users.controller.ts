@@ -35,7 +35,8 @@ export class UsersController {
   @ApiOperation({ summary: 'Get current authenticated user profile' })
   @ApiResponse({ status: 200, description: 'Current user profile' })
   async getMe(@CurrentUser('userId') currentUserId: string) {
-    return this.usersService.getUserById(currentUserId);
+    // The authenticated user may see their own email; other-user lookups cannot.
+    return this.usersService.getUserById(currentUserId, undefined, true);
   }
 
   @Patch('me')
