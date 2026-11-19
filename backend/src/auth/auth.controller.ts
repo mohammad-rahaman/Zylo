@@ -7,6 +7,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Throttle, seconds } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto, RefreshTokenDto } from './dto/login.dto';
@@ -19,6 +20,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @Throttle({ default: { limit: 5, ttl: seconds(60) } })
   @ApiOperation({ summary: 'Register a new user account' })
   @ApiResponse({ status: 201, description: 'User successfully registered' })
   @ApiResponse({ status: 409, description: 'Username or email already exists' })
@@ -27,6 +29,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Throttle({ default: { limit: 8, ttl: seconds(60) } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Authenticate user with username or email' })
   @ApiResponse({ status: 200, description: 'Authentication successful' })
@@ -36,6 +39,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @Throttle({ default: { limit: 20, ttl: seconds(60) } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Rotate refresh token to obtain a new access token' })
   @ApiResponse({ status: 200, description: 'Token refreshed successfully' })

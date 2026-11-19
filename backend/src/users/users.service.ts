@@ -11,6 +11,12 @@ import { BlockedUser, BlockedUserDocument } from '../database/schemas/blocked-us
 import { RedisService } from '../redis/redis.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+// Fields safe to expose about any other user. `email` is intentionally omitted
+// so one user cannot read another user's email via search or profile lookups.
+const PUBLIC_USER_FIELDS = 'username displayName profilePhoto bio isOnline lastSeen';
+// Fields returned only for the authenticated user's own profile (adds `email`).
+const SELF_USER_FIELDS = `${PUBLIC_USER_FIELDS} email`;
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -25,7 +31,7 @@ export class UsersService {
       const users = await this.userModel
         .find({ _id: { $ne: new Types.ObjectId(currentUserId) } })
         .limit(20)
-        .select('username displayName email profilePhoto bio isOnline lastSeen')
+        .select(PUBLIC_USER_FIELDS)
         .lean();
       return users;
     }
@@ -54,20 +60,20 @@ export class UsersService {
         $or: [{ username: regex }, { displayName: regex }, { email: regex }],
       })
       .limit(30)
-      .select('username displayName email profilePhoto bio isOnline lastSeen')
+      .select(PUBLIC_USER_FIELDS)
       .lean();
 
     return users;
   }
 
-  async getUserById(id: string, currentUserId?: string) {
+  async getUserById(id: string, currentUserId?: string, includeEmail = false) {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Invalid user ID');
     }
 
     const user = await this.userModel
       .findById(id)
-      .select('username displayName email profilePhoto bio isOnline lastSeen')
+      .select(includeEmail ? SELF_USER_FIELDS : PUBLIC_USER_FIELDS)
       .lean();
 
     if (!user) {
@@ -102,7 +108,7 @@ export class UsersService {
         { $set: dto },
         { new: true, runValidators: true },
       )
-      .select('username displayName email profilePhoto bio isOnline lastSeen')
+      .select(SELF_USER_FIELDS)
       .lean();
 
     if (!updated) {

@@ -13,6 +13,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
 
+  // Behind Render's reverse proxy: trust the first proxy hop so req.ip reflects
+  // the real client IP (X-Forwarded-For) and rate limiting is keyed correctly.
+  app.set('trust proxy', 1);
+
   const port = configService.get<number>('port', 3000);
   const apiPrefix = configService.get<string>('apiPrefix', 'api/v1');
   const corsOrigin = configService.get<string>('corsOrigin', '*');
